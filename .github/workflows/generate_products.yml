@@ -55,12 +55,14 @@ jobs:
         run: |
           export LANG=en_US.utf8
           [ "${{ github.workflow }}" != "${{ steps.key.outputs.key }}" ] && c=5 || c=1
-          seq $c | while read x; do chmod -R 777 ./ && cd ./sh && bash fix-file-permissions.bash && su builder -c '$SHELL $PWD/download-updates.bash ${{ matrix.target }} deu,enu -includesp' && su builder -c '$SHELL $PWD/create-iso-image.bash ${{ matrix.target }} -includesp'; done
-
+          seq $c | while read x; do chmod -R 777 ./ && cd ./sh && bash fix-file-permissions.bash && su builder -c '$SHELL $PWD/download-updates.bash ${{ matrix.target }} deu,enu -includesp' && su builder -c '$SHELL $PWD/create-iso-image.bash ${{ matrix.target }} -includesp -iso_name wsusoffline-${{ matrix.target }}.iso'; done
+          
       - name: Publish release ISO
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "${{ matrix.target }}"
           prerelease: false
+          title: "wsusoffline package for ${{ matrix.target }}"
           files: ./iso/wsusoffline-${{ matrix.target }}.iso
 
