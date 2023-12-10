@@ -40,18 +40,17 @@ jobs:
       - name: locale
         run: locale-gen en_US.utf8 && locale-gen de_DE.UTF-8 && update-locale
 
+      - name: prepare
+        run: |
+          adduser --shell /bin/bash --uid 1000 --disabled-password --home /home/builder builder
+
       - name: clone
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global --add safe.directory $GITHUB_WORKSPACE
           git clone https://github-actions:$GITHUB_TOKEN@${GITHUB_SERVER_URL##*/}/$GITHUB_REPOSITORY.git $GITHUB_WORKSPACE --branch $GITHUB_REF_NAME
-
-      - name: prepare
-        run: |
-          adduser --shell /bin/bash --uid 1000 --disabled-password --home /home/builder builder
-          sed -E -i 's#iso_name=""#iso_name="wsusoffline-${{ matrix.target }}.iso"#g' ./sh/create-iso-image.bash
-
+          
       - name: generate
         run: |
           export LANG=en_US.utf8
@@ -65,5 +64,5 @@ jobs:
           automatic_release_tag: "${{ matrix.target }}"
           prerelease: false
           title: "wsusoffline package for ${{ matrix.target }}"
-          files: ./iso/wsusoffline-${{ matrix.target }}.iso
+          files: ./iso/*
 
