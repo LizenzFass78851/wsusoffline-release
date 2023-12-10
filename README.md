@@ -1,7 +1,7 @@
 # wsusoffline-release
 This repository contains wsusoffline package (Windows Update Pack) for supported Windows and Office versions
 
-See the [releases](https://github.com/LizenzFass78851/wsusoffline-release) to download the releases
+See the [releases](https://github.com/LizenzFass78851/wsusoffline-release/releases) to download the releases
 
 | Product | Link |
 |:------------------:|:--------------:|
