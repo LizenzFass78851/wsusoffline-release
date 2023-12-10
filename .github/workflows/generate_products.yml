@@ -62,7 +62,7 @@ jobs:
           rm -r ./client
           cd ./iso
           export isofile=$(ls *.iso)
-          split -b 1536M  $isofile $isofile.
+          split -b 1792M  $isofile $isofile.
           rm $isofile
    
       - name: Publish release ISO
