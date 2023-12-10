@@ -71,5 +71,5 @@ jobs:
           automatic_release_tag: "${{ matrix.target }}"
           prerelease: false
           title: "wsusoffline package for ${{ matrix.target }}"
-          files: ./iso/*
+          files: ./iso/*.iso*
 
