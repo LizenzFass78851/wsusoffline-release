@@ -35,7 +35,7 @@ jobs:
       - name: install
         run: |
           DEBIAN_FRONTEND=noninteractive apt-get -y install \
-            git locales curl jq cabextract hashdeep unzip wget xmlstarlet dialog genisoimage rsync trash-cli iputils-ping
+            git locales curl jq file cabextract hashdeep unzip wget xmlstarlet dialog genisoimage rsync trash-cli iputils-ping
 
       - name: locale
         run: locale-gen en_US.utf8 && locale-gen de_DE.UTF-8 && update-locale
