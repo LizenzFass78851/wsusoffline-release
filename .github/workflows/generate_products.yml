@@ -42,7 +42,7 @@ jobs:
 
       - name: prepare
         run: |
-          adduser --shell /bin/bash --uid 1000 --group --disabled-password --home /home/builder builder
+          adduser --shell /bin/bash --uid 1000 --disabled-password --home /home/builder builder
 
       - name: clone
         env:
