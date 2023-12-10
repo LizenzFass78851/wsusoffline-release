@@ -59,6 +59,7 @@ jobs:
 
       - name: after prepare
         run: |
+          rm -r ./client
           cd ./iso
           export isofile=$(ls *.iso)
           split -b 1536M  $isofile $isofile.
