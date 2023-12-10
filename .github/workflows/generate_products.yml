@@ -40,18 +40,22 @@ jobs:
       - name: locale
         run: locale-gen en_US.utf8 && locale-gen de_DE.UTF-8 && update-locale
 
+      - name: prepare
+        run: |
+          adduser --shell /bin/bash --uid 1000 --group --disabled-password --home /home/builder builder
+
       - name: clone
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global --add safe.directory $GITHUB_WORKSPACE
           git clone https://github-actions:$GITHUB_TOKEN@${GITHUB_SERVER_URL##*/}/$GITHUB_REPOSITORY.git $GITHUB_WORKSPACE --branch $GITHUB_REF_NAME
-
+     
       - name: generate
         run: |
           export LANG=en_US.utf8
           [ "${{ github.workflow }}" != "${{ steps.key.outputs.key }}" ] && c=5 || c=1
-          seq $c | while read x; do cd ./sh && bash fix-file-permissions.bash && ./download-updates.bash ${{ matrix.target }} deu,enu -includesp && ./create-iso-image.bash ${{ matrix.target }} -includesp; done
+          seq $c | while read x; do cd ./sh && bash fix-file-permissions.bash && su -s $SHELL -c 'download-updates.bash ${{ matrix.target }} deu,enu -includesp' builder && su -s $SHELL -c 'create-iso-image.bash ${{ matrix.target }} -includesp' builder; done
 
       - name: Publish release ISO
         uses: "marvinpinto/action-automatic-releases@latest"
