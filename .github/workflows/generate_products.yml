@@ -3,8 +3,8 @@ name: generate_products
 on:
   push:
     branches: [ main ]
-#    paths:
-#      - '.github/workflows/generate_products.yml'
+    paths:
+      - '.github/workflows/generate_products.yml'
 #  schedule:
 #    - cron: '14 04 * * 3'
   workflow_dispatch:
