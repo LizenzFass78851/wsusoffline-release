@@ -2,8 +2,8 @@
 
 # Filename: syntax-check.bash
 #
-# Copyright (C) 2021-2022 Hartmut Buhrmester
-#                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
+# Copyright (C) 2021 Hartmut Buhrmester
+#                    <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
 #
@@ -71,14 +71,8 @@ find . -type f -name "*.bash" -execdir bash -n "{}" +
 # are sourced in a loop as in the main scripts update-generator.bash
 # and download-updates.bash.
 
-if type -P shellcheck > /dev/null
-then
-    printf '%s\n' "Syntax check with shellcheck..."
-    find . -type f -name "*.bash" -execdir shellcheck --exclude=SC2034,SC2154 --format=gcc --shell=bash --external-sources "{}" +
-else
-    printf '%s\n' "Error: Please install the package shellcheck..."
-    exit 1
-fi
+printf '%s\n' "Syntax check with shellcheck..."
+find . -type f -name "*.bash" -execdir shellcheck --exclude=SC2034,SC2154 --format=gcc --shell=bash --external-sources "{}" +
 
 printf '%s\n' "All done, exiting..."
 exit 0

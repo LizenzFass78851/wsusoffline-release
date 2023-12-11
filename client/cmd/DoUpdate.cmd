@@ -31,7 +31,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=12.7 (b81)
+set WSUSOFFLINE_VERSION=12.6.1hf6
 title %~n0 %*
 echo Starting WSUS Offline Update - Community Edition - v. %WSUSOFFLINE_VERSION% at %TIME%...
 set UPDATE_LOGFILE=%SystemRoot%\wsusofflineupdate.log
@@ -152,6 +152,7 @@ if "%OS_NAME%"=="w61" goto UnsupOS
 if "%OS_NAME%"=="w62" (
   if /i "%OS_ARCH%"=="x86" goto UnsupOS
 )
+if "%OS_NAME%"=="w110" goto UnsupOS
 for %%i in (x86 x64) do (if /i "%OS_ARCH%"=="%%i" goto ValidArch)
 goto UnsupArch
 :ValidArch
@@ -194,6 +195,7 @@ rem echo Found Internet Explorer version: %IE_VER_MAJOR%.%IE_VER_MINOR%.%IE_VER_
 rem if "%MSEDGE_INSTALLED%"=="1" echo Found Edge (Chromium) version: %MSEDGE_VER_MAJOR%.%MSEDGE_VER_MINOR%.%MSEDGE_VER_BUILD%.%MSEDGE_VER_REVIS%
 rem if "%MSEDGEUPDATE_INSTALLED%"=="1" echo Found Edge (Chromium) Updater version: %MSEDGEUPDATE_VER_MAJOR%.%MSEDGEUPDATE_VER_MINOR%.%MSEDGEUPDATE_VER_BUILD%.%MSEDGEUPDATE_VER_REVIS%
 rem echo Found Microsoft .NET Framework 3.5 version: %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVIS%
+rem echo Found Windows PowerShell version: %PSH_VER_MAJOR%.%PSH_VER_MINOR%
 rem echo Found Microsoft .NET Framework 4 version: %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_BUILD% (release: %DOTNET4_RELEASE%)
 rem echo Found Windows Management Framework version: %WMF_VER_MAJOR%.%WMF_VER_MINOR%.%WMF_VER_BUILD%.%WMF_VER_REVIS%
 rem echo Found Windows Defender definitions version: %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_BUILD%.%WDDEFS_VER_REVIS%
@@ -216,6 +218,7 @@ call :Log "Info: Found Internet Explorer version %IE_VER_MAJOR%.%IE_VER_MINOR%.%
 if "%MSEDGE_INSTALLED%"=="1" call :Log "Info: Found Edge (Chromium) version %MSEDGE_VER_MAJOR%.%MSEDGE_VER_MINOR%.%MSEDGE_VER_BUILD%.%MSEDGE_VER_REVIS%"
 if "%MSEDGEUPDATE_INSTALLED%"=="1" call :Log "Info: Found Edge (Chromium) Updater version %MSEDGEUPDATE_VER_MAJOR%.%MSEDGEUPDATE_VER_MINOR%.%MSEDGEUPDATE_VER_BUILD%.%MSEDGEUPDATE_VER_REVIS%"
 call :Log "Info: Found Microsoft .NET Framework 3.5 version %DOTNET35_VER_MAJOR%.%DOTNET35_VER_MINOR%.%DOTNET35_VER_BUILD%.%DOTNET35_VER_REVIS%"
+call :Log "Info: Found Windows PowerShell version %PSH_VER_MAJOR%.%PSH_VER_MINOR%"
 call :Log "Info: Found Microsoft .NET Framework 4 version %DOTNET4_VER_MAJOR%.%DOTNET4_VER_MINOR%.%DOTNET4_VER_BUILD% (release: %DOTNET4_RELEASE%)"
 call :Log "Info: Found Windows Management Framework version %WMF_VER_MAJOR%.%WMF_VER_MINOR%.%WMF_VER_BUILD%.%WMF_VER_REVIS%"
 call :Log "Info: Found Windows Defender definitions version %WDDEFS_VER_MAJOR%.%WDDEFS_VER_MINOR%.%WDDEFS_VER_BUILD%.%WDDEFS_VER_REVIS%"
@@ -456,12 +459,9 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 goto SPInstalled
 :SPw100
 goto SkipSPInst
+:SPw110
+goto SkipSPInst
 :SPInstalled
-if "%REBOOT_REQUIRED%"=="1" (
-  if "%RECALL_REQUIRED%" NEQ "1" (
-    set RECALL_REQUIRED=1
-  )
-)
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%REBOOT_REQUIRED%"=="1" goto Installed
 :SkipSPInst
@@ -538,11 +538,6 @@ call :Log "Info: Updated Servicing Stack to %SERVICING_VER_NEW%"
 set SERVICING_VER=%SERVICING_VER_NEW%
 goto CheckServicingStack
 :ServicingStackInstalled
-if "%REBOOT_REQUIRED%"=="1" (
-  if "%RECALL_REQUIRED%" NEQ "1" (
-    set RECALL_REQUIRED=1
-  )
-)
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%REBOOT_REQUIRED%"=="1" goto Installed
 :SkipServicingStack
@@ -555,87 +550,33 @@ rem exclude LTSB/LTSC editions
 if "!OS_EDITIONID:~0,11!"=="EnterpriseS" (
   echo Skipping feature upgrade as a LTSB-/LTSC-SKU has been detected
   call :Log "Info: Skipping feature upgrade as a LTSB-/LTSC-SKU has been detected"
-  rem echo. >%SystemRoot%\Temp\wou_buildupgrade_prep_tried.txt
-  rem echo. >%SystemRoot%\Temp\wou_buildupgrade_tried.txt
   goto SkipBuildUpgrade
 )
 
-rem enforced Build upgrade (e.g. 19041 -> 19042)
+rem enforced Build upgrade (e.g. 1903 -> 1909)
 set WOU_BUILDUPGRADE_OLDBUILD=
 set WOU_BUILDUPGRADE_MINREVIS=
 set WOU_BUILDUPGRADE_PREUPD=
 set WOU_BUILDUPGRADE_NEWBUILD=
 set WOU_BUILDUPGRADE_EPKGID=
 if not exist ..\static\StaticUpdateIds-BuildUpgradesForced.txt goto SkipForcedBuildUpgrade
-set WOU_BUILDUPGRADE_FOUNDPREUPD=
-set WOU_BUILDUPGRADE_FOUNDEPKG=
-if "%OS_ARCH%"=="x64" (set OS_SEARCH_DIR=%OS_NAME%-%OS_ARCH%) else (set OS_SEARCH_DIR=%OS_NAME%)
 for /F "tokens=1,2,3,4,5 delims=," %%a in (..\static\StaticUpdateIds-BuildUpgradesForced.txt) do (
   if "%OS_VER_BUILD%"=="%%a" (
     if "!WOU_BUILDUPGRADE_NEWBUILD!"=="" (
-      set WOU_BUILDUPGRADE_FOUNDEPKG=0
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\*%%e*.cab ..\%OS_SEARCH_DIR%\glb\*%%e*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDEPKG=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%e*.cab ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%e*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDEPKG=1)
-      )
-      set WOU_BUILDUPGRADE_FOUNDPREUPD=0
-      if %OS_VER_REVIS% GEQ %%b set WOU_BUILDUPGRADE_FOUNDPREUPD=1
-      if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\*%%c*.cab ..\%OS_SEARCH_DIR%\glb\*%%c*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDPREUPD=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%c*.cab ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%c*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDPREUPD=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="1" (
-        if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="1" (
-          set WOU_BUILDUPGRADE_OLDBUILD=%%a
-          set WOU_BUILDUPGRADE_MINREVIS=%%b
-          set WOU_BUILDUPGRADE_PREUPD=%%c
-          set WOU_BUILDUPGRADE_NEWBUILD=%%d
-          set WOU_BUILDUPGRADE_EPKGID=%%e
-        )
-      )
+      set WOU_BUILDUPGRADE_OLDBUILD=%%a
+      set WOU_BUILDUPGRADE_MINREVIS=%%b
+      set WOU_BUILDUPGRADE_PREUPD=%%c
+      set WOU_BUILDUPGRADE_NEWBUILD=%%d
+      set WOU_BUILDUPGRADE_EPKGID=%%e
     ) else if "%%d" GEQ "!WOU_BUILDUPGRADE_NEWBUILD!" (
-      set WOU_BUILDUPGRADE_FOUNDEPKG=0
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\*%%e*.cab ..\%OS_SEARCH_DIR%\glb\*%%e*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDEPKG=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%e*.cab ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%e*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDEPKG=1)
-      )
-      set WOU_BUILDUPGRADE_FOUNDPREUPD=0
-      if %OS_VER_REVIS% GEQ %%b set WOU_BUILDUPGRADE_FOUNDPREUPD=1
-      if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\*%%c*.cab ..\%OS_SEARCH_DIR%\glb\*%%c*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDPREUPD=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%c*.cab ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%c*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDPREUPD=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="1" (
-        if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="1" (
-          set WOU_BUILDUPGRADE_OLDBUILD=%%a
-          set WOU_BUILDUPGRADE_MINREVIS=%%b
-          set WOU_BUILDUPGRADE_PREUPD=%%c
-          set WOU_BUILDUPGRADE_NEWBUILD=%%d
-          set WOU_BUILDUPGRADE_EPKGID=%%e
-        )
-      )
+      set WOU_BUILDUPGRADE_OLDBUILD=%%a
+      set WOU_BUILDUPGRADE_MINREVIS=%%b
+      set WOU_BUILDUPGRADE_PREUPD=%%c
+      set WOU_BUILDUPGRADE_NEWBUILD=%%d
+      set WOU_BUILDUPGRADE_EPKGID=%%e
     )
   )
 )
-set OS_SEARCH_DIR=
-set WOU_BUILDUPGRADE_FOUNDEPKG=
-set WOU_BUILDUPGRADE_FOUNDEPKG=
 if "%WOU_BUILDUPGRADE_OLDBUILD%"=="" goto SkipForcedBuildUpgrade
 if "%WOU_BUILDUPGRADE_MINREVIS%"=="" goto SkipForcedBuildUpgrade
 if "%WOU_BUILDUPGRADE_PREUPD%"=="" goto SkipForcedBuildUpgrade
@@ -644,7 +585,7 @@ if "%WOU_BUILDUPGRADE_EPKGID%"=="" goto SkipForcedBuildUpgrade
 
 call :Log "Info: A feature upgrade from build %WOU_BUILDUPGRADE_OLDBUILD% to %WOU_BUILDUPGRADE_NEWBUILD% is enforced"
 
-rem If "StaticUpdateIds-BuildUpgradesForced.txt" says "19041 -> 19042" while "StaticUpdateIds-BuildUpgrades.txt" says "19041 -> 19044" and the user wants a build upgrade, go straight to 19044
+rem If "StaticUpdateIds-BuildUpgradesForced.txt" says "19041->19042" while "StaticUpdateIds-BuildUpgrades.txt" says "19041->19043" and the user wants a build upgrade, go straight to 19043
 if "%DO_UPGRADES%"=="/upgradebuilds" (goto CheckBuildUpgradeOptional)
 rem otherwise go to 19042
 if %OS_VER_REVIS% GEQ %WOU_BUILDUPGRADE_MINREVIS% (goto PerformBuildUpgrade) else (goto PrepareBuildUpgrade)
@@ -661,75 +602,23 @@ set WOU_BUILDUPGRADE_EPKGID=
 echo Checking for feature upgrades via enablement package...
 :CheckBuildUpgradeOptional
 if not exist ..\static\StaticUpdateIds-BuildUpgrades.txt goto SkipBuildUpgrade
-set WOU_BUILDUPGRADE_FOUNDPREUPD=
-set WOU_BUILDUPGRADE_FOUNDEPKG=
-if "%OS_ARCH%"=="x64" (set OS_SEARCH_DIR=%OS_NAME%-%OS_ARCH%) else (set OS_SEARCH_DIR=%OS_NAME%)
 for /F "tokens=1,2,3,4,5 delims=," %%a in (..\static\StaticUpdateIds-BuildUpgrades.txt) do (
   if "%OS_VER_BUILD%"=="%%a" (
     if "!WOU_BUILDUPGRADE_NEWBUILD!"=="" (
-      set WOU_BUILDUPGRADE_FOUNDEPKG=0
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\*%%e*.cab ..\%OS_SEARCH_DIR%\glb\*%%e*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDEPKG=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%e*.cab ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%e*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDEPKG=1)
-      )
-      set WOU_BUILDUPGRADE_FOUNDPREUPD=0
-      if %OS_VER_REVIS% GEQ %%b set WOU_BUILDUPGRADE_FOUNDPREUPD=1
-      if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\*%%c*.cab ..\%OS_SEARCH_DIR%\glb\*%%c*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDPREUPD=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%c*.cab ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%c*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDPREUPD=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="1" (
-        if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="1" (
-          set WOU_BUILDUPGRADE_OLDBUILD=%%a
-          set WOU_BUILDUPGRADE_MINREVIS=%%b
-          set WOU_BUILDUPGRADE_PREUPD=%%c
-          set WOU_BUILDUPGRADE_NEWBUILD=%%d
-          set WOU_BUILDUPGRADE_EPKGID=%%e
-        )
-      )
+      set WOU_BUILDUPGRADE_OLDBUILD=%%a
+      set WOU_BUILDUPGRADE_MINREVIS=%%b
+      set WOU_BUILDUPGRADE_PREUPD=%%c
+      set WOU_BUILDUPGRADE_NEWBUILD=%%d
+      set WOU_BUILDUPGRADE_EPKGID=%%e
     ) else if "%%d" GEQ "!WOU_BUILDUPGRADE_NEWBUILD!" (
-      set WOU_BUILDUPGRADE_FOUNDEPKG=0
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\*%%e*.cab ..\%OS_SEARCH_DIR%\glb\*%%e*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDEPKG=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%e*.cab ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%e*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDEPKG=1)
-      )
-      set WOU_BUILDUPGRADE_FOUNDPREUPD=0
-      if %OS_VER_REVIS% GEQ %%b set WOU_BUILDUPGRADE_FOUNDPREUPD=1
-      if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\*%%c*.cab ..\%OS_SEARCH_DIR%\glb\*%%c*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDPREUPD=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="0" (
-        dir /b ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%c*.cab ..\%OS_SEARCH_DIR%\glb\%OS_VER_BUILD_INTERNAL%\*%%c*.msu >nul 2>&1
-        if "!errorlevel!"=="0" (set WOU_BUILDUPGRADE_FOUNDPREUPD=1)
-      )
-      if "!WOU_BUILDUPGRADE_FOUNDEPKG!"=="1" (
-        if "!WOU_BUILDUPGRADE_FOUNDPREUPD!"=="1" (
-          set WOU_BUILDUPGRADE_OLDBUILD=%%a
-          set WOU_BUILDUPGRADE_MINREVIS=%%b
-          set WOU_BUILDUPGRADE_PREUPD=%%c
-          set WOU_BUILDUPGRADE_NEWBUILD=%%d
-          set WOU_BUILDUPGRADE_EPKGID=%%e
-        )
-      )
+      set WOU_BUILDUPGRADE_OLDBUILD=%%a
+      set WOU_BUILDUPGRADE_MINREVIS=%%b
+      set WOU_BUILDUPGRADE_PREUPD=%%c
+      set WOU_BUILDUPGRADE_NEWBUILD=%%d
+      set WOU_BUILDUPGRADE_EPKGID=%%e
     )
   )
 )
-set OS_SEARCH_DIR=
-set WOU_BUILDUPGRADE_FOUNDEPKG=
-set WOU_BUILDUPGRADE_FOUNDEPKG=
 if "%WOU_BUILDUPGRADE_OLDBUILD%"=="" goto SkipBuildUpgrade
 if "%WOU_BUILDUPGRADE_MINREVIS%"=="" goto SkipBuildUpgrade
 if "%WOU_BUILDUPGRADE_PREUPD%"=="" goto SkipBuildUpgrade
@@ -783,59 +672,9 @@ set WOU_BUILDUPGRADE_MINREVIS=
 set WOU_BUILDUPGRADE_PREUPD=
 set WOU_BUILDUPGRADE_NEWBUILD=
 set WOU_BUILDUPGRADE_EPKGID=
-if "%REBOOT_REQUIRED%"=="1" (
-  if "%RECALL_REQUIRED%" NEQ "1" (
-    set RECALL_REQUIRED=1
-  )
-)
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%REBOOT_REQUIRED%"=="1" goto Installed
 :SkipBuildUpgrade
-
-rem *** Update Windows Update Agent ***
-echo Checking Windows Update Agent version...
-if %WUA_VER_MAJOR% LSS %WUA_VER_TARGET_MAJOR% goto InstallWUA
-if %WUA_VER_MAJOR% GTR %WUA_VER_TARGET_MAJOR% goto SkipWUAInst
-if %WUA_VER_MINOR% LSS %WUA_VER_TARGET_MINOR% goto InstallWUA
-if %WUA_VER_MINOR% GTR %WUA_VER_TARGET_MINOR% goto SkipWUAInst
-if %WUA_VER_BUILD% LSS %WUA_VER_TARGET_BUILD% goto InstallWUA
-if %WUA_VER_BUILD% GTR %WUA_VER_TARGET_BUILD% goto SkipWUAInst
-if %WUA_VER_REVIS% LSS %WUA_VER_TARGET_REVIS% goto InstallWUA
-if %WUA_VER_REVIS% GEQ %WUA_VER_TARGET_REVIS% goto SkipWUAInst
-:InstallWUA
-if exist %SystemRoot%\Temp\wou_wua_tried.txt goto SkipWUAInst
-if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
-echo. >%SystemRoot%\Temp\wou_wua_tried.txt
-if "%WUA_TARGET_ID%"=="" (
-  echo Warning: Environment variable WUA_TARGET_ID not set.
-  call :Log "Warning: Environment variable WUA_TARGET_ID not set"
-  goto SkipWUAInst
-)
-echo %WUA_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
-call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
-if errorlevel 1 goto ListError
-if exist "%TEMP%\UpdatesToInstall.txt" (
-  echo Installing most recent Windows Update Agent...
-  call InstallListedUpdates.cmd /selectoptions %VERIFY_MODE% %DISM_MODE% /errorsaswarnings
-  set ERR_LEVEL=!errorlevel!
-  rem echo DoUpdate: ERR_LEVEL=%ERR_LEVEL%
-  if "!ERR_LEVEL!"=="3010" (
-    set REBOOT_REQUIRED=1
-  ) else if "!ERR_LEVEL!"=="3011" (
-    set RECALL_REQUIRED=1
-  ) else if "!ERR_LEVEL!" NEQ "0" (
-    goto InstError
-  )
-  set WUA_SHA2_SUPPORT=1
-) else (
-  echo Warning: Windows Update Agent installation file ^(kb%WUA_TARGET_ID%^) not found.
-  call :Log "Warning: Windows Update Agent installation file (kb%WUA_TARGET_ID%) not found"
-  goto SkipWUAInst
-)
-rem FIXME 12.5 (b69)
-set RECALL_REQUIRED=1
-:SkipWUAInst
-if "%RECALL_REQUIRED%"=="1" goto Installed
 
 rem *** Install Internet Explorer ***
 if "%OS_SRV_CORE%"=="1" goto SkipIEInst
@@ -908,7 +747,7 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
 :SkipIEw62Pre
 echo Installing Internet Explorer 11...
 for /F %%i in ('dir /B %IE_FILENAME%') do (
-  call InstallOSUpdate.cmd "..\%OS_NAME%-%OS_ARCH%\glb\%%i" %VERIFY_MODE% /ignoreerrors
+  call InstallOSUpdate.cmd "..\%OS_NAME%-%OS_ARCH%\glb\%%i" %VERIFY_MODE% /ignoreerrors /passive /qn /norestart
   set ERR_LEVEL=!errorlevel!
   rem echo DoUpdate: ERR_LEVEL=!ERR_LEVEL!
   if "!ERR_LEVEL!"=="3010" (
@@ -928,7 +767,7 @@ for /F %%i in ('dir /B %IE_FILENAME%') do (
   if not errorlevel 1 (
     echo Installing Internet Explorer 11 language pack...
     for /F %%i in ('dir /B %IE_LANG_FILENAME%') do (
-      call InstallOSUpdate.cmd "..\%OS_NAME%-%OS_ARCH%\glb\%%i" %VERIFY_MODE% /ignoreerrors
+      call InstallOSUpdate.cmd "..\%OS_NAME%-%OS_ARCH%\glb\%%i" %VERIFY_MODE% /ignoreerrors /passive /qn /norestart
       set ERR_LEVEL=!errorlevel!
       rem echo DoUpdate: ERR_LEVEL=!ERR_LEVEL!
       if "!ERR_LEVEL!"=="3010" (
@@ -948,11 +787,6 @@ goto IEInstalled
 :IEw100
 :IEInstalled
 set IE_FILENAME=
-if "%REBOOT_REQUIRED%"=="1" (
-  if "%RECALL_REQUIRED%" NEQ "1" (
-    set RECALL_REQUIRED=1
-  )
-)
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%REBOOT_REQUIRED%"=="1" goto Installed
 :SkipIEInst
@@ -993,7 +827,7 @@ if %MSEDGE_VER_REVIS% GEQ %MSEDGE_VER_TARGET_REVIS% goto SkipMSEdgeInst
 :InstallMSEdge
 if exist %SystemRoot%\Temp\wou_msedge_tried.txt goto SkipMSEdgeInst
 echo Installing most recent Edge (Chromium)...
-call InstallOSUpdate.cmd "..\msedge\%MSEDGE_FILENAME%" %VERIFY_MODE% /copytotemp /errorsaswarnings --msedge --verbose-logging --do-not-launch-msedge --system-level
+call InstallOSUpdate.cmd "..\msedge\%MSEDGE_FILENAME%" %VERIFY_MODE% /errorsaswarnings --msedge --verbose-logging --do-not-launch-msedge --system-level
 set ERR_LEVEL=%errorlevel%
 if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
 echo. >%SystemRoot%\Temp\wou_msedge_tried.txt
@@ -1164,32 +998,23 @@ set REBOOT_REQUIRED=1
 :SkipDotNet35Inst
 
 rem *** Install .NET Framework 4 ***
-if "%INSTALL_DOTNET4%" NEQ "/instdotnet4" (
-  rem force upgrade to 4.6.2, if .NET 4 is installed
-  if "%DOTNET4_VER_MAJOR%" NEQ "4" (goto SkipDotNet4Inst)
-)
+if "%INSTALL_DOTNET4%" NEQ "/instdotnet4" goto SkipDotNet4Inst
 echo Checking .NET Framework 4 installation state...
-rem echo DOTNET4_RELEASE: DOTNET4_RELEASE
-rem echo DOTNET4_RELEASE_TARGET: DOTNET4_RELEASE_TARGET
-if %DOTNET4_RELEASE% GEQ %DOTNET4_RELEASE_TARGET% goto SkipDotNet4Inst
+if %DOTNET4_VER_MAJOR% LSS %DOTNET4_VER_TARGET_MAJOR% goto InstallDotNet4
+if %DOTNET4_VER_MAJOR% GTR %DOTNET4_VER_TARGET_MAJOR% goto SkipDotNet4Inst
+if %DOTNET4_VER_MINOR% LSS %DOTNET4_VER_TARGET_MINOR% goto InstallDotNet4
+if %DOTNET4_VER_MINOR% GTR %DOTNET4_VER_TARGET_MINOR% goto SkipDotNet4Inst
+if %DOTNET4_VER_BUILD% GEQ %DOTNET4_VER_TARGET_BUILD% goto SkipDotNet4Inst
 :InstallDotNet4
 if exist %SystemRoot%\Temp\wou_net4_tried.txt goto SkipDotNet4Inst
 if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
 echo. >%SystemRoot%\Temp\wou_net4_tried.txt
-if "%INSTALL_DOTNET4%"=="/instdotnet4" (
-  if %OS_VER_BUILD_INTERNAL% GEQ 19041 (
-    set DOTNET4_FILENAME=..\dotnet\ndp481-x86-x64-allos-enu.exe
-    set DOTNET4LP_FILENAME=..\dotnet\ndp481-x86-x64-allos-%OS_LANG%.exe
-  ) else if %OS_VER_BUILD_INTERNAL% LSS 14393 (
-    set DOTNET4_FILENAME=..\dotnet\ndp462-kb3151800-x86-x64-allos-enu.exe
-    set DOTNET4LP_FILENAME=..\dotnet\ndp462-kb3151800-x86-x64-allos-%OS_LANG%.exe
-  ) else (
-    set DOTNET4_FILENAME=..\dotnet\ndp48-x86-x64-allos-enu.exe
-    set DOTNET4LP_FILENAME=..\dotnet\ndp48-x86-x64-allos-%OS_LANG%.exe
-  )
-) else (
+if "%OS_VER_MAJOR%.%OS_VER_MINOR%.%OS_VER_BUILD_INTERNAL%"=="10.0.10240" (
   set DOTNET4_FILENAME=..\dotnet\ndp462-kb3151800-x86-x64-allos-enu.exe
   set DOTNET4LP_FILENAME=..\dotnet\ndp462-kb3151800-x86-x64-allos-%OS_LANG%.exe
+) else (
+  set DOTNET4_FILENAME=..\dotnet\ndp48-x86-x64-allos-enu.exe
+  set DOTNET4LP_FILENAME=..\dotnet\ndp48-x86-x64-allos-%OS_LANG%.exe
 )
 if "%OS_SRV_CORE%"=="1" (
   set DOTNET4_INSTOPTS=/q /norestart
@@ -1269,7 +1094,7 @@ if "%ERR_LEVEL%"=="3010" (
 :SkipDotNet35CustomInst
 rem *** Install .NET Framework 4 - Custom ***
 if "%INSTALL_DOTNET4%"=="/instdotnet4" goto InstallDotNet4Custom
-if "%DOTNET4_VER_MAJOR%" GEQ "4" goto InstallDotNet4Custom
+if %DOTNET4_VER_MAJOR% EQU %DOTNET4_VER_TARGET_MAJOR% goto InstallDotNet4Custom
 goto SkipDotNet4CustomInst
 :InstallDotNet4Custom
 if not exist ..\static\custom\StaticUpdateIds-dotnet4.txt goto SkipDotNet4CustomInst
@@ -1297,20 +1122,15 @@ if "%ERR_LEVEL%"=="3010" (
   goto InstError
 )
 :SkipDotNet4CustomInst
-if "%REBOOT_REQUIRED%"=="1" (
-  if "%RECALL_REQUIRED%" NEQ "1" (
-    set RECALL_REQUIRED=1
-  )
-)
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%REBOOT_REQUIRED%"=="1" goto Installed
 
 rem *** Install Windows Management Framework ***
 if "%INSTALL_WMF%" NEQ "/instwmf" goto SkipWMFInst
 if "%OS_NAME%"=="w100" goto SkipWMFInst
-if %DOTNET4_RELEASE% LSS %WMF_PREREQ_DOTNET4_RELEASE% (
-  echo Warning: Missing Windows Management Framework prerequisite .NET Framework 4.5.2 or newer.
-  call :Log "Warning: Missing Windows Management Framework prerequisite .NET Framework 4.5.2 or newer"
+if %DOTNET4_VER_MAJOR% LSS %DOTNET4_VER_TARGET_MAJOR% (
+  echo Warning: Missing Windows Management Framework prerequisite .NET Framework 4.
+  call :Log "Warning: Missing Windows Management Framework prerequisite .NET Framework ^4"
   goto SkipWMFInst
 )
 echo Checking Windows Management Framework installation state...
@@ -1320,15 +1140,13 @@ if %WMF_VER_MINOR% LSS %WMF_VER_TARGET_MINOR% goto InstallWMF
 if %WMF_VER_MINOR% GEQ %WMF_VER_TARGET_MINOR% goto SkipWMFInst
 :InstallWMF
 if exist %SystemRoot%\Temp\wou_wmf_tried.txt goto SkipWMFInst
-if exist "%SystemRoot%\Temp\wou_wmf_tried_kb%WMF_TARGET_ID%.txt" goto SkipWMFInst
 if not exist %SystemRoot%\Temp\nul md %SystemRoot%\Temp
+echo. >%SystemRoot%\Temp\wou_wmf_tried.txt
 if "%WMF_TARGET_ID%"=="" (
-  echo. >%SystemRoot%\Temp\wou_wmf_tried.txt
   echo Warning: Environment variable WMF_TARGET_ID not set.
   call :Log "Warning: Environment variable WMF_TARGET_ID not set"
   goto SkipWMFInst
 )
-echo. >%SystemRoot%\Temp\wou_wmf_tried_kb%WMF_TARGET_ID%.txt
 echo %WMF_TARGET_ID%>"%TEMP%\MissingUpdateIds.txt"
 call ListUpdatesToInstall.cmd /excludestatics /ignoreblacklist
 if errorlevel 1 goto ListError
@@ -1352,11 +1170,6 @@ if "%ERR_LEVEL%"=="3010" (
 rem FIXME 12.5 (b69)
 set RECALL_REQUIRED=1
 :SkipWMFInst
-if "%REBOOT_REQUIRED%"=="1" (
-  if "%RECALL_REQUIRED%" NEQ "1" (
-    set RECALL_REQUIRED=1
-  )
-)
 if "%REBOOT_REQUIRED%"=="1" goto Installed
 if "%RECALL_REQUIRED%"=="1" goto Installed
 
@@ -1392,7 +1205,7 @@ for /f "tokens=1,2,3 delims=," %%a in (..\static\StaticUpdateIds-MSIProducts.txt
       ) else if "%%k"=="" (
         set CURRENT_MSIPRODUCT_FILEDIRECTORY_FINAL=%%f\%%g\%%h\%%i
       ) else (
-        rem ERROR (maximale Iterationstiefe erreicht)
+	    rem ERROR (maximale Iterationstiefe erreicht)
         set CURRENT_MSIPRODUCT_FILEDIRECTORY_FINAL=
       )
     )
@@ -1714,8 +1527,6 @@ rem *** Determine and install missing Microsoft updates ***
 if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (
   for %%i in ("%SystemRoot%\Temp\WOUpdatesToInstall.txt") do if %%~zi==0 del %%i
   if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (
-    echo Continuing installation based on previous scan...
-    call :Log "Info: Continuing installation based on previous scan"
     move /Y %SystemRoot%\Temp\WOUpdatesToInstall.txt "%TEMP%\UpdatesToInstall.txt" >nul 2>&1
   )
   goto InstallUpdates
@@ -1776,24 +1587,11 @@ if exist "%TEMP%\UpdatesToInstall.txt" (
   )
   call :Log "Info: Installed Windows Update scan prerequisites"
 )
-rem *** Enforce all optional components to be fully updated (including reboot) before dynamically searching for updates ***
-if "%REBOOT_REQUIRED%"=="1" (
-  if "%RECALL_REQUIRED%" NEQ "1" (
-    rem echo DEBUG: Enforcing recall when reboot is required
-    set RECALL_REQUIRED=1
-  )
-)
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%REBOOT_REQUIRED%"=="1" goto Installed
 :SkipWuPre
 
 :ListMissingIds
-rem *** Determine Windows Update Agent (WUA) support for SHA2-signed wsusscn2.cab ***
-set WUA_SHA2_SUPPORT=0
-if %WUA_VER_MAJOR% GTR %WUA_VER_SHA2_MAJOR% set WUA_SHA2_SUPPORT=1
-if %WUA_VER_MAJOR% EQU %WUA_VER_SHA2_MAJOR% if %WUA_VER_MINOR% GTR %WUA_VER_SHA2_MINOR% set WUA_SHA2_SUPPORT=1
-if %WUA_VER_MAJOR% EQU %WUA_VER_SHA2_MAJOR% if %WUA_VER_MINOR% EQU %WUA_VER_SHA2_MINOR% if %WUA_VER_BUILD% GTR %WUA_VER_SHA2_BUILD% set WUA_SHA2_SUPPORT=1
-if %WUA_VER_MAJOR% EQU %WUA_VER_SHA2_MAJOR% if %WUA_VER_MINOR% EQU %WUA_VER_SHA2_MINOR% if %WUA_VER_BUILD% EQU %WUA_VER_SHA2_BUILD% if %WUA_VER_REVIS% GEQ %WUA_VER_SHA2_REVIS% set WUA_SHA2_SUPPORT=1
 rem *** Adjust service 'Windows Update' ***
 echo Adjusting service 'Windows Update'...
 call :EnableWUSvc
@@ -1821,14 +1619,6 @@ if errorlevel 1 (
 )
 if exist "%TEMP%\hash-wsusscn2.txt" del "%TEMP%\hash-wsusscn2.txt"
 :SkipVerifyCatalog
-if "%OS_SHA2_SUPPORT%" NEQ "1" (
-  echo Warning: Support for SHA2 signed updates is missing. Updates might fail to install.
-  call :Log "Warning: Support for SHA2 signed updates is missing"
-)
-if "%WUA_SHA2_SUPPORT%" NEQ "1" (
-  echo Warning: Support for a SHA2 signed catalog file is missing. Missing updates might not be found.
-  call :Log "Warning: Support for a SHA2 signed catalog file is missing"
-)
 echo %TIME% - Listing ids of missing updates (please be patient, this will take a while)...
 copy /Y ..\wsus\wsusscn2.cab "%TEMP%" >nul
 %CSCRIPT_PATH% //Nologo //E:vbs ListMissingUpdateIds.vbs %LIST_MODE_IDS%
@@ -1851,117 +1641,6 @@ echo Listing update files...
 call ListUpdatesToInstall.cmd %LIST_MODE_IDS% %LIST_MODE_UPDATES%
 if errorlevel 1 goto ListError
 call :Log "Info: Listed update files"
-
-rem *** Try to extract a servicing stack update from the updates listed ***
-rem only for Windows 10 1809 (aka build 17763) or newer
-if %OS_VER_MAJOR% LSS 10 goto InstallUpdates
-rem if %OS_VER_MINOR% LSS 0 goto InstallUpdates
-if %OS_VER_BUILD% LSS 17763 goto InstallUpdates
-
-if not exist "%TEMP%\UpdatesToInstall.txt" goto InstallUpdates
-
-if exist "%TEMP%\wou_SSU" rd /s /q "%TEMP%\wou_SSU" >nul 2>&1
-
-echo Attempting to extract integrated servicing stack updates...
-for /f "usebackq delims=" %%f in ("%TEMP%\UpdatesToInstall.txt") do (
-  set WOU_SSU_UPDNAME=%%f
-  set WOU_SSU_FOUND=0
-  if "!WOU_SSU_UPDNAME:~0,7!__!WOU_SSU_UPDNAME:~-4!"=="..\w100__.cab" (
-    if not exist "%TEMP%\wou_SSU" mkdir "%TEMP%\wou_SSU"
-    if not exist "%TEMP%\wou_SSU\tmp" mkdir "%TEMP%\wou_SSU\tmp"
-    %SystemRoot%\System32\expand.exe "!WOU_SSU_UPDNAME!" -F:SSU*.cab "%TEMP%\wou_SSU\tmp" >nul
-    dir /b "%TEMP%\wou_SSU\tmp\SSU*.cab" >nul 2>&1
-    if not errorlevel 1 (
-      set WOU_SSU_FOUND=1
-    )
-  ) else if "!WOU_SSU_UPDNAME:~0,7!__!WOU_SSU_UPDNAME:~-4!"=="..\w100__.msu" (
-    if not exist "%TEMP%\wou_SSU" mkdir "%TEMP%\wou_SSU"
-    if not exist "%TEMP%\wou_SSU\tmp" mkdir "%TEMP%\wou_SSU\tmp"
-    %SystemRoot%\System32\expand.exe "!WOU_SSU_UPDNAME!" -F:SSU*.cab "%TEMP%\wou_SSU\tmp" >nul
-    dir /b "%TEMP%\wou_SSU\tmp\SSU*.cab" >nul 2>&1
-    if not errorlevel 1 (
-      set WOU_SSU_FOUND=1
-    )
-  )
-  rem echo WOU_SSU_UPDNAME=!WOU_SSU_UPDNAME!
-  rem echo WOU_SSU_FOUND=!WOU_SSU_FOUND!
-
-  if "!WOU_SSU_FOUND!"=="1" (
-    if "%VERIFY_MODE%"=="/verify" (
-      echo Verifying integrity of !WOU_SSU_UPDNAME!...
-      for /F "tokens=2,3 delims=\" %%i in ("!WOU_SSU_UPDNAME!") do (
-        if exist ..\md\hashes-%%i-%%j.txt (
-          %SystemRoot%\System32\findstr.exe /L /I /C:%% /C:%%~nxf ..\md\hashes-%%i-%%j.txt >"%TEMP%\hash-%%i-%%j.txt"
-          %HASHDEEP_PATH% -a -b -k "%TEMP%\hash-%%i-%%j.txt" "!WOU_SSU_UPDNAME!"
-          if errorlevel 1 (
-            if exist "%TEMP%\hash-%%i-%%j.txt" del "%TEMP%\hash-%%i-%%j.txt"
-            rd /s /q "%TEMP%\wou_SSU\tmp" >nul 2>&1
-            echo ERROR: File hash does not match stored value ^(file: !WOU_UPD_NAME!^).
-            echo %DATE% %TIME% - Error: File hash does not match stored value ^(file: !WOU_UPD_NAME!^)>>%UPDATE_LOGFILE%
-          ) else (
-            if exist "%TEMP%\hash-%%i-%%j.txt" del "%TEMP%\hash-%%i-%%j.txt"
-            move /y "%TEMP%\wou_SSU\tmp\SSU*.cab" "%TEMP%\wou_SSU" >nul
-            rd /s /q "%TEMP%\wou_SSU\tmp" >nul 2>&1
-          )
-        ) else if exist ..\md\hashes-%%i.txt (
-          %SystemRoot%\System32\findstr.exe /L /I /C:%% /C:%%~nxf ..\md\hashes-%%i.txt >"%TEMP%\hash-%%i.txt"
-          %HASHDEEP_PATH% -a -b -k "%TEMP%\hash-%%i.txt" "!WOU_SSU_UPDNAME!"
-          if errorlevel 1 (
-            if exist "%TEMP%\hash-%%i.txt" del "%TEMP%\hash-%%i.txt"
-            rd /s /q "%TEMP%\wou_SSU\tmp" >nul 2>&1
-            echo ERROR: File hash does not match stored value ^(file: !WOU_UPD_NAME!^).
-            echo %DATE% %TIME% - Error: File hash does not match stored value ^(file: !WOU_UPD_NAME!^)>>%UPDATE_LOGFILE%
-          ) else (
-            if exist "%TEMP%\hash-%%i.txt" del "%TEMP%\hash-%%i.txt"
-            move /y "%TEMP%\wou_SSU\tmp\SSU*.cab" "%TEMP%\wou_SSU" >nul
-            rd /s /q "%TEMP%\wou_SSU\tmp" >nul 2>&1
-          )
-        ) else (
-          echo Warning: Hash files ..\md\hashes-%%i-%%j.txt and ..\md\hashes-%%i.txt not found.
-          echo %DATE% %TIME% - Warning: Hash files ..\md\hashes-%%i-%%j.txt and ..\md\hashes-%%i.txt not found>>%UPDATE_LOGFILE%
-        )
-      )
-    ) else (
-      move /y "%TEMP%\wou_SSU\tmp\SSU*.cab" "%TEMP%\wou_SSU" >nul
-      rd /s /q "%TEMP%\wou_SSU\tmp" >nul 2>&1
-    )
-  )
-)
-set WOU_SSU_UPDNAME=
-set WOU_SSU_FOUND=
-
-if not exist "%TEMP%\wou_SSU" goto InstallUpdates
-dir /b "%TEMP%\wou_SSU\SSU*.cab" >nul 2>&1
-if errorlevel 1 (
-  rem no integrated servicing stack update found
-  rd /s /q "%TEMP%\wou_SSU" >nul 2>&1
-  goto InstallUpdates
-)
-
-echo Installing extracted servicing stack updates...
-for /f "delims=" %%f in ('dir /b "%TEMP%\wou_SSU\SSU*.cab"') do (
-  call InstallOSUpdate.cmd "%TEMP%\wou_SSU\%%f" /selectoptions %DISM_MODE% /errorsaswarnings
-  set ERR_LEVEL=!errorlevel!
-  rem echo DoUpdate: ERR_LEVEL=!ERR_LEVEL!
-  if "!ERR_LEVEL!"=="3010" (
-    set REBOOT_REQUIRED=1
-  ) else if "!ERR_LEVEL!"=="3011" (
-    set RECALL_REQUIRED=1
-  ) else if "!ERR_LEVEL!" NEQ "0" (
-    goto InstError
-  )
-)
-rd /s /q "%TEMP%\wou_SSU" >nul 2>&1
-if "%RECALL_REQUIRED%"=="1" (
-  rem del "%TEMP%\UpdatesToInstall.txt"
-  move /Y "%TEMP%\UpdatesToInstall.txt" %SystemRoot%\Temp\WOUpdatesToInstall.txt >nul 2>&1
-  goto Installed
-)
-if "%REBOOT_REQUIRED%"=="1" (
-  rem del "%TEMP%\UpdatesToInstall.txt"
-  move /Y "%TEMP%\UpdatesToInstall.txt" %SystemRoot%\Temp\WOUpdatesToInstall.txt >nul 2>&1
-  goto Installed
-)
 
 :InstallUpdates
 rem *** Install updates ***
@@ -1988,14 +1667,6 @@ if exist %SystemRoot%\Temp\WOUpdatesToInstall.txt (set RECALL_REQUIRED=1) else (
 if "%RECALL_REQUIRED%"=="1" goto Installed
 :SkipUpdates
 
-if "%BOOT_MODE%"=="/autoreboot" (
-  if "%REBOOT_REQUIRED%"=="1" (
-    if "%RECALL_REQUIRED%" NEQ "1" (
-      rem echo DEBUG: Enforcing recall when reboot is required while on autoreboot is enabled
-      set RECALL_REQUIRED=1
-    )
-  )
-)
 if "%RECALL_REQUIRED%"=="1" goto Installed
 if "%REBOOT_REQUIRED%"=="1" goto Installed
 goto NoUpdates
@@ -2077,7 +1748,6 @@ goto :eof
 :Cleanup
 if exist %SystemRoot%\Temp\wou_w63upd1_tried.txt del %SystemRoot%\Temp\wou_w63upd1_tried.txt
 if exist %SystemRoot%\Temp\wou_w63upd2_tried.txt del %SystemRoot%\Temp\wou_w63upd2_tried.txt
-if exist %SystemRoot%\Temp\wou_wua_tried.txt del %SystemRoot%\Temp\wou_wua_tried.txt
 if exist %SystemRoot%\Temp\wou_iepre_tried.txt del %SystemRoot%\Temp\wou_iepre_tried.txt
 if exist %SystemRoot%\Temp\wou_ie_tried.txt del %SystemRoot%\Temp\wou_ie_tried.txt
 if exist %SystemRoot%\Temp\wou_msedge_tried.txt del %SystemRoot%\Temp\wou_msedge_tried.txt
@@ -2103,12 +1773,6 @@ if "%SHOW_LOG%"=="/showlog" start %SystemRoot%\System32\notepad.exe %UPDATE_LOGF
 goto :eof
 
 :Installed
-rem echo DoUpdate (Installed): RECALL_REQUIRED:%RECALL_REQUIRED%
-rem echo DoUpdate (Installed): REBOOT_REQUIRED:%REBOOT_REQUIRED%
-rem echo DoUpdate (Installed): BOOT_MODE:%BOOT_MODE%
-rem echo DoUpdate (Installed): OS_NAME:%OS_NAME%
-rem echo DoUpdate (Installed): OS_DOMAIN_ROLE:%OS_DOMAIN_ROLE%
-rem echo DoUpdate (Installed): USERNAME:%USERNAME%
 if "%RECALL_REQUIRED%"=="1" (
   if "%BOOT_MODE%"=="/autoreboot" (
     if "%OS_NAME%"=="w100" (
