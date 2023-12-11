@@ -167,7 +167,6 @@ Excluding 64-bit files and directories
 
    excludes these files:
 
-   ../client/win/glb/Silverlight_x64.exe
    ../client/cpp/vcredist2005_x64.exe
    ../client/cpp/vcredist2008_x64.exe
    ../client/cpp/vcredist2010_x64.exe
@@ -199,13 +198,6 @@ Excluding 32-bit files and directories
 
    The remaining rules are not simply the reverse of the above, because
    64-bit Windows versions may still need some 32-bit installers:
-
-     * Windows Server 2008 in 32-bit and 64-bit (w60 and w60-x64) both
-       need the 32-bit version of Silverlight. Therefore the file
-       ExcludeListISO-w60-x64.txt excludes Silverlight_x64.exe, but not
-       Silverlight_x86.exe (as might be expected).
-
-       https://forums.wsusoffline.net/viewtopic.php?f=5&t=8258#p26844
 
      * 64-bit Windows versions may need both 32-bit and 64-bit
        installers for the Visual C++ runtime libraries, to support

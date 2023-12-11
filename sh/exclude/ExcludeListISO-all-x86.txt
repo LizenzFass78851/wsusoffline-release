@@ -33,7 +33,7 @@ w100-x64
 # Exclude 64-bit subdirectories of msse and wddefs
 x64-glb
 
-# Exclude 64-bit installers for vcredist and Silverlight
+# Exclude 64-bit installers for vcredist
 *_x64.exe
 
 # The two "x64-cross-product" ISO images don't exclude any .NET

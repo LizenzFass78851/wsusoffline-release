@@ -2,7 +2,7 @@
 #
 # Filename: ini-files.bash
 #
-# Copyright (C) 2019-2021 Hartmut Buhrmester
+# Copyright (C) 2019-2022 Hartmut Buhrmester
 #                    <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License

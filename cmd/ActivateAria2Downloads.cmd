@@ -7,9 +7,9 @@ setlocal enableextensions
 if errorlevel 1 goto NoExtensions
 
 rem clear vars storing parameters
+set JUST_RELOAD=
 set http_proxy=
 set https_proxy=
-set JUST_RELOAD=
 
 if "%DIRCMD%" NEQ "" set DIRCMD=
 

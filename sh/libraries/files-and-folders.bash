@@ -2,7 +2,7 @@
 #
 # Filename: files-and-folders.bash
 #
-# Copyright (C) 2016-2021 Hartmut Buhrmester
+# Copyright (C) 2016-2022 Hartmut Buhrmester
 #                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
@@ -615,7 +615,7 @@ function extract_filenames ()
              > "${outputfile}"
     else
         :
-        #debug=enabled log_debug_message "The file ${inputfile##*/} was not found or is empty."
+        #log_debug_message "The file ${inputfile##*/} was not found or is empty."
     fi
     return 0
 }

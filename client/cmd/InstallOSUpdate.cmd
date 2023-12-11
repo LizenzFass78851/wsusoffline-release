@@ -10,6 +10,7 @@ rem clear vars storing parameters
 set SELECT_OPTIONS=
 set VERIFY_FILES=
 set DISM_PROGRESS=
+set COPY_TO_TEMP=
 set ERRORS_AS_WARNINGS=
 set IGNORE_ERRORS=
 
@@ -40,6 +41,8 @@ goto InvalidParam
 :FileFullPathParsed
 if not exist "%FILE_FULL_PATH%" goto ParamFileNotFound
 
+set FILE_FULL_PATH_DISPLAY=%FILE_FULL_PATH%
+
 set FILE_NAME=
 for /F %%i in ("%FILE_FULL_PATH%") do (
   set FILE_NAME=%%~nxi
@@ -54,6 +57,10 @@ popd
 shift /1
 :EvalParams
 if "%~1"=="" goto NoMoreParams
+if /i "%~1"=="/endevalparams" (
+  shift /1
+  goto NoMoreParams
+)
 if /i "%~1"=="/selectoptions" (
   set SELECT_OPTIONS=1
   shift /1
@@ -69,6 +76,11 @@ if /i "%~1"=="/showdismprogress" (
   shift /1
   goto EvalParams
 )
+if /i "%~1"=="/copytotemp" (
+  set COPY_TO_TEMP=1
+  shift /1
+  goto EvalParams
+)
 if /i "%~1"=="/errorsaswarnings" (
   set ERRORS_AS_WARNINGS=1
   shift /1
@@ -81,15 +93,24 @@ if /i "%~1"=="/ignoreerrors" (
 )
 
 :NoMoreParams
+rem cache file in %TEMP% if requested
+if "%COPY_TO_TEMP%"=="1" (
+  set FILE_FULL_PATH=%TEMP%\%FILE_NAME%
+  if exist "!FILE_FULL_PATH!" del "!FILE_FULL_PATH!"
+  copy "%FILE_FULL_PATH_DISPLAY%" "!FILE_FULL_PATH!" >nul 2>&1
+  if errorlevel 1 goto CacheError
+  if not exist "!FILE_FULL_PATH!" goto CacheError
+)
+
 if "%VERIFY_FILES%" NEQ "1" goto SkipVerification
 if not exist %HASHDEEP_PATH% (
   echo Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found.
   echo %DATE% %TIME% - Warning: Hash computing/auditing utility %HASHDEEP_PATH% not found>>%UPDATE_LOGFILE%
   goto SkipVerification
 )
-echo Verifying integrity of %FILE_FULL_PATH%...
+echo Verifying integrity of %FILE_FULL_PATH_DISPLAY%...
 rem FIXME: This expects a relative path and might fail, when an absolute path is passed
-for /F "tokens=2,3 delims=\" %%i in ("%FILE_FULL_PATH%") do (
+for /F "tokens=2,3 delims=\" %%i in ("%FILE_FULL_PATH_DISPLAY%") do (
   if exist ..\md\hashes-%%i-%%j.txt (
     %SystemRoot%\System32\findstr.exe /L /I /C:%% /C:%FILE_NAME% ..\md\hashes-%%i-%%j.txt >"%TEMP%\hash-%%i-%%j.txt"
     %HASHDEEP_PATH% -a -b -k "%TEMP%\hash-%%i-%%j.txt" "%FILE_FULL_PATH%"
@@ -170,7 +191,7 @@ if "!INSTALL_SWITCHES!"=="" (
   rem echo InstallOSUpdate: Using default install switches "/q /z"
 )
 :InstExe_FoundOptions
-echo Installing %FILE_FULL_PATH%...
+echo Installing %FILE_FULL_PATH_DISPLAY%...
 "%FILE_FULL_PATH%" !INSTALL_SWITCHES!
 set ERR_LEVEL=%errorlevel%
 rem echo InstallOSUpdate: ERR_LEVEL=%ERR_LEVEL%
@@ -190,7 +211,7 @@ if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 goto InstFailure
 
 :InstMsi
-echo Installing %FILE_FULL_PATH%...
+echo Installing %FILE_FULL_PATH_DISPLAY%...
 pushd %~dp1
 %SystemRoot%\System32\msiexec.exe /i "%FILE_FULL_PATH%" /qn /norestart
 set ERR_LEVEL=%errorlevel%
@@ -212,7 +233,7 @@ if "%IGNORE_ERRORS%"=="1" goto InstSuccess
 goto InstFailure
 
 :InstMsu
-echo Installing %FILE_FULL_PATH%...
+echo Installing %FILE_FULL_PATH_DISPLAY%...
 %SystemRoot%\System32\wusa.exe "%FILE_FULL_PATH%" /quiet /norestart
 set ERR_LEVEL=%errorlevel%
 rem echo InstallOSUpdate: ERR_LEVEL=%ERR_LEVEL%
@@ -240,17 +261,17 @@ goto InstFailure
 :InstZip
 if not exist ..\bin\unzip.exe goto NoUnZip
 set FILE_FULL_PATH_ONLY=
-for /f "tokens=4 delims=\" %%i in ('echo %FILE_FULL_PATH%') do (
+for /f "tokens=4 delims=\" %%i in ('echo %FILE_FULL_PATH_DISPLAY%') do (
   if not "%%i"=="" (
     set FILE_FULL_PATH_ONLY=%%~ni
   )
 )
 if "%FILE_FULL_PATH_ONLY%"=="" (
-  echo ERROR: Extraction of %FILE_FULL_PATH% failed
-  echo %DATE% %TIME% - Error: Extraction of %FILE_FULL_PATH% failed>>%UPDATE_LOGFILE%
+  echo ERROR: Extraction of %FILE_FULL_PATH_DISPLAY% failed
+  echo %DATE% %TIME% - Error: Extraction of %FILE_FULL_PATH_DISPLAY% failed>>%UPDATE_LOGFILE%
   goto InstFailure
 )
-echo Unpacking %FILE_FULL_PATH% to "%TEMP%\%FILE_FULL_PATH_ONLY%.msu"...
+echo Unpacking %FILE_FULL_PATH_DISPLAY% to "%TEMP%\%FILE_FULL_PATH_ONLY%.msu"...
 ..\bin\unzip.exe -o -d "%TEMP%" "%FILE_FULL_PATH%" "%FILE_FULL_PATH_ONLY%.msu"
 if not exist "%TEMP%\%FILE_FULL_PATH_ONLY%.msu" (
   echo ERROR: Installation file "%TEMP%\%FILE_FULL_PATH_ONLY%.msu" not found.
@@ -280,10 +301,10 @@ goto InstFailure
 :InstCab
 if exist %SystemRoot%\Sysnative\Dism.exe goto InstDism
 if exist %SystemRoot%\System32\Dism.exe goto InstDism
-echo Installing %FILE_FULL_PATH%...
+echo Installing %FILE_FULL_PATH_DISPLAY%...
 set ERR_LEVEL=0
 if "%OS_ARCH%"=="x64" (set TOKEN_KB=3) else (set TOKEN_KB=2)
-for /F "tokens=%TOKEN_KB% delims=-" %%i in ("%FILE_FULL_PATH%") do (
+for /F "tokens=%TOKEN_KB% delims=-" %%i in ("%FILE_FULL_PATH_DISPLAY%") do (
   call SafeRmDir.cmd "%TEMP%\%%i"
   md "%TEMP%\%%i"
   %SystemRoot%\System32\expand.exe "%FILE_FULL_PATH%" -F:* "%TEMP%\%%i" >nul
@@ -320,7 +341,7 @@ if "%OS_NAME%"=="w100" (
     )
   )
 )
-echo Installing %FILE_FULL_PATH%...
+echo Installing %FILE_FULL_PATH_DISPLAY%...
 if exist %SystemRoot%\Sysnative\Dism.exe (
   %SystemRoot%\Sysnative\Dism.exe /Online %DISM_QPARAM% /NoRestart /Add-Package /PackagePath:"%FILE_FULL_PATH%" /IgnoreCheck
 ) else (
@@ -377,28 +398,33 @@ echo ERROR: Directory "%TEMP%" not found.
 echo %DATE% %TIME% - Error: Directory "%TEMP%" not found>>%UPDATE_LOGFILE%
 goto Error
 
-:UnsupType
-echo ERROR: Unsupported file type (file: %FILE_FULL_PATH%).
-echo %DATE% %TIME% - Error: Unsupported file type (file: %FILE_FULL_PATH%)>>%UPDATE_LOGFILE%
-goto InstFailure
-
 :NoUnZip
 echo ERROR: Utility ..\bin\unzip.exe not found.
 echo %DATE% %TIME% - Error: Utility ..\bin\unzip.exe not found>>%UPDATE_LOGFILE%
 goto InstFailure
 
+:CacheError
+echo ERROR: Failed to copy %FILE_FULL_PATH% to the temporary directory.
+echo %DATE% %TIME% - Error: Failed to copy %FILE_FULL_PATH% to the temporary directory>>%UPDATE_LOGFILE%
+goto InstFailure
+
 :IntegrityError
-echo ERROR: File hash does not match stored value (file: %FILE_FULL_PATH%).
-echo %DATE% %TIME% - Error: File hash does not match stored value (file: %FILE_FULL_PATH%)>>%UPDATE_LOGFILE%
+echo ERROR: File hash does not match stored value (file: %FILE_FULL_PATH_DISPLAY%).
+echo %DATE% %TIME% - Error: File hash does not match stored value (file: %FILE_FULL_PATH_DISPLAY%)>>%UPDATE_LOGFILE%
+goto InstFailure
+
+:UnsupType
+echo ERROR: Unsupported file type (file: %FILE_FULL_PATH_DISPLAY%).
+echo %DATE% %TIME% - Error: Unsupported file type (file: %FILE_FULL_PATH_DISPLAY%)>>%UPDATE_LOGFILE%
 goto InstFailure
 
 :InstSkipped
-echo Skipped inapplicable %FILE_FULL_PATH%.
-echo %DATE% %TIME% - Info: Skipped inapplicable %FILE_FULL_PATH%>>%UPDATE_LOGFILE%
+echo Skipped inapplicable %FILE_FULL_PATH_DISPLAY%.
+echo %DATE% %TIME% - Info: Skipped inapplicable %FILE_FULL_PATH_DISPLAY%>>%UPDATE_LOGFILE%
 goto EoF
 
 :InstSuccess
-echo %DATE% %TIME% - Info: Installed %FILE_FULL_PATH%>>%UPDATE_LOGFILE%
+echo %DATE% %TIME% - Info: Installed %FILE_FULL_PATH_DISPLAY%>>%UPDATE_LOGFILE%
 goto EoF
 
 :InstFailure
@@ -406,20 +432,44 @@ if "%IGNORE_ERRORS%"=="1" goto EoF
 if "%ERRORS_AS_WARNINGS%"=="1" (goto InstWarning) else (goto InstError)
 
 :InstWarning
-echo Warning: Installation of %FILE_FULL_PATH% failed (errorlevel: %ERR_LEVEL%).
-echo %DATE% %TIME% - Warning: Installation of %FILE_FULL_PATH% failed (errorlevel: %ERR_LEVEL%)>>%UPDATE_LOGFILE%
+echo Warning: Installation of %FILE_FULL_PATH_DISPLAY% failed (errorlevel: %ERR_LEVEL%).
+echo %DATE% %TIME% - Warning: Installation of %FILE_FULL_PATH_DISPLAY% failed (errorlevel: %ERR_LEVEL%)>>%UPDATE_LOGFILE%
 goto EoF
 
 :InstError
-echo ERROR: Installation of %FILE_FULL_PATH% failed (errorlevel: %ERR_LEVEL%).
-echo %DATE% %TIME% - Error: Installation of %FILE_FULL_PATH% failed (errorlevel: %ERR_LEVEL%)>>%UPDATE_LOGFILE%
+echo ERROR: Installation of %FILE_FULL_PATH_DISPLAY% failed (errorlevel: %ERR_LEVEL%).
+echo %DATE% %TIME% - Error: Installation of %FILE_FULL_PATH_DISPLAY% failed (errorlevel: %ERR_LEVEL%)>>%UPDATE_LOGFILE%
 goto Error
 
 :Error
+rem don't forget to cleanup cached files
+if "%COPY_TO_TEMP%"=="1" (
+  if "!FILE_FULL_PATH!" NEQ "" (
+    if "!FILE_FULL_PATH_DISPLAY!" NEQ "" (
+      rem check, if caching code already ran
+      if "%FILE_FULL_PATH_DISPLAY%" NEQ "%FILE_FULL_PATH%" (
+        if exist "!FILE_FULL_PATH!" del "!FILE_FULL_PATH!"
+      )
+    )
+  )
+)
+
 endlocal
 exit /b 1
 
 :EoF
+rem don't forget to cleanup cached files
+if "%COPY_TO_TEMP%"=="1" (
+  if "!FILE_FULL_PATH!" NEQ "" (
+    if "!FILE_FULL_PATH_DISPLAY!" NEQ "" (
+      rem check, if caching code already ran
+      if "%FILE_FULL_PATH_DISPLAY%" NEQ "%FILE_FULL_PATH%" (
+        if exist "!FILE_FULL_PATH!" del "!FILE_FULL_PATH!"
+      )
+    )
+  )
+)
+
 if "%RECALL_REQUIRED%"=="1" (
   endlocal
   exit /b 3011

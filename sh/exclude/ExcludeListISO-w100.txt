@@ -35,7 +35,7 @@ w100-x64
 # Exclude 64-bit subdirectories of msse and wddefs
 x64-glb
 
-# Exclude 64-bit installers for vcredist and Silverlight
+# Exclude 64-bit installers for vcredist
 *_x64.exe
 
 # Exclude .NET Frameworks 3.5 and 4.5

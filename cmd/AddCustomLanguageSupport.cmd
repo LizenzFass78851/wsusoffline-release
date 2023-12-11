@@ -16,8 +16,8 @@ call RemoveCustomLanguageSupport.cmd %1 /quiet
 
 rem *** Add support for %1 to .NET custom URL files ***
 if /i "%2" NEQ "/quiet" echo Adding support for %1 to .NET custom URL files...
-for /F %%i in (..\static\StaticDownloadLinks-dotnet-%1.txt) do (
-  echo %%i | %SystemRoot%\System32\find.exe /I "ndp48-x86-x64-allos-">>..\static\custom\StaticDownloadLinks-dotnet.txt
+if exist ..\static\StaticDownloadLinks-dotnet-%1.txt (
+  type ..\static\StaticDownloadLinks-dotnet-%1.txt >>..\static\custom\StaticDownloadLinks-dotnet.txt
 )
 rem *** Add support for %1 to IEx custom URL files ***
 if /i "%2" NEQ "/quiet" echo Adding support for %1 to IEx custom URL files...

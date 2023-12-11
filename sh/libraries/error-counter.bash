@@ -2,7 +2,7 @@
 #
 # Filename: error-counter.bash
 #
-# Copyright (C) 2018-2021 Hartmut Buhrmester
+# Copyright (C) 2018-2022 Hartmut Buhrmester
 #                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
