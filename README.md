@@ -13,6 +13,8 @@ See the [releases](https://github.com/LizenzFass78851/wsusoffline-release/releas
 | Office 2013 (x86/x64) | [o2k13](https://github.com/LizenzFass78851/wsusoffline-release/releases/tag/o2k13) |
 | Office 2016 (x86/x64) | [o2k16](https://github.com/LizenzFass78851/wsusoffline-release/releases/tag/o2k16) |
 
+Build state: [![generate_products](https://github.com/LizenzFass78851/wsusoffline-release/actions/workflows/generate_products.yml/badge.svg?branch=main)](https://github.com/LizenzFass78851/wsusoffline-release/actions/workflows/generate_products.yml)
+
 The ISOs published there are split into 1.9 GB files each.
 Put these back together under Linux using the cut command.
 On Windows this is possible with 7zip, but the files that follow with .aa .ab and so on can be renamed to .001 .002 and so on.
