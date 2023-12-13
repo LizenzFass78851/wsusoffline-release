@@ -5,8 +5,8 @@ on:
     branches: [ main ]
     paths:
       - '.github/workflows/generate_products.yml'
-#  schedule:
-#    - cron: '14 04 * * 3'
+  schedule:
+    - cron: '34 14 20 * *'
   workflow_dispatch:
 
 jobs:
