@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/workflows/generate_products.yml'
   schedule:
-    - cron: '34 14 20 * *'
+    - cron: '34 14 */3 * 2'
   workflow_dispatch:
 
 jobs:
