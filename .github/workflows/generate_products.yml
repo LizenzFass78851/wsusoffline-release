@@ -16,7 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [w62-x64, w63, w63-x64, w100, w100-x64, o2k13, o2k16]
+        target: [w62-x64, w63, w63-x64, o2k13, o2k16]
+#        target: [w62-x64, w63, w63-x64, w100, w100-x64, o2k13, o2k16]
     runs-on: ubuntu-latest
     if: github.repository == 'lizenzfass78851/wsusoffline-release'
 
