@@ -1,7 +1,6 @@
 *ndp3*
 *ndp45-*
 *NDP46-*
-*NDP47-*
 *o2k*
 *oxp*
 *ofc*

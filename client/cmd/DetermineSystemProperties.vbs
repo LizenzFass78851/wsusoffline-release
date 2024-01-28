@@ -34,7 +34,6 @@ Private Const strRegValInstallationType        = "InstallationType"
 Private Const strRegValPShVersion              = "PowerShellVersion"
 Private Const strRegValAVSVersion              = "AVSignatureVersion"
 Private Const strRegValDisableAntiSpyware      = "DisableAntiSpyware"
-'Private Const strRegValDisableAntiVirus        = "DisableAntiVirus"
 Private Const strRegValCurrentPowerPolicy      = "CurrentPowerPolicy"
 Private Const strRegKeyOfficePrefix_Mx86       = "HKLM\Software\Microsoft\Office\"
 Private Const strRegKeyOfficePrefix_Mx64       = "HKLM\Software\Wow6432Node\Microsoft\Office\"
@@ -53,7 +52,6 @@ Private Const strOfficeNames                   = "o2k13,o2k16"
 Private Const strBuildNumbers_o2k13            = "4420;4569"
 Private Const strBuildNumbers_o2k16            = "4266"
 Private Const strVersionSuffixes               = "MAJOR,MINOR,BUILD,REVIS"
-Private Const numBuildPSFSupport               = 21382
 Private Const idxBuild                         = 2
 
 Dim wshShell, objFileSystem, objCmdFile, objWMIService, objQueryItem, objFolder, strFilePathMSEdge, strFilePathMSEdgeUpdate, strVersionMSEdgeUpdate, arrayOfficeNames, arrayOfficeVersions, MSIProducts
@@ -390,13 +388,13 @@ Private Function OfficeSPVersion(strExeVersion)
 End Function
 
 ' Quelle: https://stackoverflow.com/questions/854975/how-to-read-from-a-text-file-using-vbscript
-Private Function ReadTextFile(strRelFileName)
+Private Function ReadStaticFile(strRelFileName)
   Dim dict, file, line, row
   
   Set dict = CreateObject("Scripting.Dictionary")
   
-  If ((Not objFileSystem Is Nothing) And (objFileSystem.FileExists(strRelFileName) = True)) Then
-    Set file = objFileSystem.OpenTextFile (strRelFileName)
+  If ((Not objFileSystem Is Nothing) And (objFileSystem.FileExists("..\static\" & strRelFileName) = True)) Then
+    Set file = objFileSystem.OpenTextFile ("..\static\" & strRelFileName)
     row = 0
     Do Until file.AtEndOfStream
       line = file.Readline
@@ -407,7 +405,7 @@ Private Function ReadTextFile(strRelFileName)
     file.Close
   End If
   
-  Set ReadTextFile = dict
+  Set ReadStaticFile = dict
 End Function
 
 Private Function CheckMSIProduct(strProductName)
@@ -427,8 +425,8 @@ Private Function CheckMSIProduct(strProductName)
   Dim MSIProduct_old_ids, MSIProduct_new_ids
   Dim strMSIProductProductBuffer, strMSIProductPatchBuffer, strMSIProductStaticId, strMSIProductStaticIdProductBuffer, strMSIProductStaticIdPatchBuffer
   
-  Set MSIProduct_old_ids = ReadTextFile("..\static\StaticUpdateIds-MSIProducts-" & strProductName & "_old.txt")
-  Set MSIProduct_new_ids = ReadTextFile("..\static\StaticUpdateIds-MSIProducts-" & strProductName & "_new.txt")
+  Set MSIProduct_old_ids = ReadStaticFile("StaticUpdateIds-MSIProducts-" & strProductName & "_old.txt")
+  Set MSIProduct_new_ids = ReadStaticFile("StaticUpdateIds-MSIProducts-" & strProductName & "_new.txt")
   
   Set objInstaller = CreateObject("WindowsInstaller.Installer")
   
@@ -546,7 +544,7 @@ For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_OperatingS
   If RegExists(wshShell, strRegKeyWindowsVersion & strRegValEditionID) Then
     objCmdFile.WriteLine("set OS_EDITIONID=" & RegRead(wshShell, strRegKeyWindowsVersion & strRegValEditionID))
   Else
-    objCmdFile.WriteLine("set OS_EDITIONID=")
+        objCmdFile.WriteLine("set OS_EDITIONID=")
   End If
   strInstallationType = RegRead(wshShell, strRegKeyWindowsVersion & strRegValInstallationType)
   If InStr(1, strInstallationType, "Core", vbTextCompare) > 0 Then
@@ -588,11 +586,6 @@ For Each objQueryItem in objWMIService.ExecQuery("Select * from Win32_OperatingS
   ElseIf CInt(Split(objQueryItem.Version, ".")(0)) > 6 Then
     ' Windows 10 / Windows Server 2016 / Windows Server 2019 have native SHA2-support
     objCmdFile.WriteLine("set OS_SHA2_SUPPORT=1")
-  End If
-  If CInt(Split(objQueryItem.Version, ".")(2)) >= numBuildPSFSupport Then
-    objCmdFile.WriteLine("set OS_PSF_SUPPORT=1")
-  Else
-    objCmdFile.WriteLine("set OS_PSF_SUPPORT=0")
   End If
   objCmdFile.WriteLine("set SystemDirectory=" & objQueryItem.SystemDirectory)
 Next
@@ -713,21 +706,14 @@ End If
 
 ' Determine Microsoft .NET Framework 3.5 SP1 installation state
 WriteVersionToFile objCmdFile, "DOTNET35_VER", RegRead(wshShell, strRegKeyDotNet35 & strRegValVersion)
-
-' Determine Microsoft .NET Framework 4.x installation state
 WriteVersionToFile objCmdFile, "DOTNET4_VER", RegRead(wshShell, strRegKeyDotNet4 & strRegValVersion)
-If RegExists(wshShell, strRegKeyDotNet4 & strRegValRelease) Then
-  objCmdFile.WriteLine("set DOTNET4_RELEASE=" & RegRead(wshShell, strRegKeyDotNet4 & strRegValRelease))
-Else
-  objCmdFile.WriteLine("set DOTNET4_RELEASE=0")
-End If
+objCmdFile.WriteLine("set DOTNET4_RELEASE=" & RegRead(wshShell, strRegKeyDotNet4 & strRegValRelease))
+
+' Determine Windows PowerShell version
+WriteVersionToFile objCmdFile, "PSH_VER", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
 
 ' Determine Windows Management Framework version
-If RegExists(wshShell, strRegKeyManagementFramework & strRegValPShVersion) Then
-  WriteVersionToFile objCmdFile, "WMF_VER", RegRead(wshShell, strRegKeyManagementFramework & strRegValPShVersion)
-Else
-  WriteVersionToFile objCmdFile, "WMF_VER", RegRead(wshShell, strRegKeyPowerShell & strRegValPShVersion)
-End If
+WriteVersionToFile objCmdFile, "WMF_VER", RegRead(wshShell, strRegKeyManagementFramework & strRegValPShVersion)
 
 ' Determine Windows Defender installation state
 If RegExists(wshShell, strRegKeyWD) Then
@@ -737,7 +723,8 @@ Else
 End If
 
 ' Determine Windows Defender state
-If ((RegRead(wshShell, strRegKeyWD & strRegValDisableAntiSpyware) = "1") Or (RegRead(wshShell, strRegKeyWDPolicy & strRegValDisableAntiSpyware) = "1")) Then
+If ( (RegRead(wshShell, strRegKeyWD & strRegValDisableAntiSpyware) = "1") _
+  Or (RegRead(wshShell, strRegKeyWDPolicy & strRegValDisableAntiSpyware) = "1") ) Then
   objCmdFile.WriteLine("set WD_DISABLED=1")
 Else
   objCmdFile.WriteLine("set WD_DISABLED=0")
@@ -762,7 +749,7 @@ For i = 0 To UBound(arrayOfficeNames)
     strMSOFilePath = OfficeMSOFilePath(wshShell, arrayOfficeVersions(i))
     If strMSOFilePath <> "" Then
       If objFileSystem.FileExists(strMSOFilePath) Then
-        strOfficeMSOVersion = GetFileVersion(objFileSystem, strMSOFilePath)
+        strOfficeMSOVersion = GetFileVersion(objFileSystem, OfficeMSOFilePath(wshShell, arrayOfficeVersions(i)))
         WriteVersionToFile objCmdFile, UCase(arrayOfficeNames(i)) & "_VER", strOfficeMSOVersion
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_SP_VER=" & OfficeSPVersion(strOfficeMSOVersion))
         objCmdFile.WriteLine("set " & UCase(arrayOfficeNames(i)) & "_ARCH=" & OfficeArchitecture(wshShell, strOSArchitecture, arrayOfficeVersions(i), strOfficeInstallPath))
@@ -779,7 +766,7 @@ For i = 0 To UBound(arrayOfficeNames)
 Next
 
 ' Determine installed products (for C++ and dotNET 5+)
-Set MSIProducts = ReadTextFile("..\static\StaticUpdateIds-MSIProducts.txt")
+Set MSIProducts = ReadStaticFile("StaticUpdateIds-MSIProducts.txt")
 For Each strMSIProductId in MSIProducts.Items
   If CheckMSIProduct(Split(strMSIProductId, ",")(0)) = True Then objCmdFile.WriteLine("set " & UCase(Split(strMSIProductId, ",")(0)) & "=1")
 Next

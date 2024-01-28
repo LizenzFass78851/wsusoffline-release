@@ -2,7 +2,7 @@
 #
 # Filename: 10-show-selection-dialogs-with-dialog.bash
 #
-# Copyright (C) 2018-2022 Hartmut Buhrmester
+# Copyright (C) 2018-2021 Hartmut Buhrmester
 #                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
@@ -58,7 +58,7 @@ show_w100_versions="disabled"
 
 # Define an indexed array of the keys only
 #
-# This list could also be extracted from the associative array below,
+# This list could also be extracted from the associative arrays below,
 # but then the keys would be listed in a seemingly random order. For
 # example, try:
 #
@@ -97,9 +97,9 @@ all_keys=(
 declare -A all_labels=(
     [w62-x64]="Windows Server 2012, 64-bit"
     [w63]="Windows 8.1, 32-bit"
-    [w63-x64]="Windows 8.1 and Server 2012 R2, 64-bit"
+    [w63-x64]="Windows 8.1 / Server 2012 R2, 64-bit"
     [w100]="Windows 10, 32-bit"
-    [w100-x64]="Windows 10/11 and Server 2016/2019/2022, 64-bit"
+    [w100-x64]="Windows 10 / Server 2016/2019, 64-bit"
     [o2k13]="Office 2013, 32-bit"
     [o2k13-x64]="Office 2013, 32-bit and 64-bit"
     [o2k16]="Office 2016, 32-bit"
@@ -200,41 +200,44 @@ declare -A all_values=(
     [wddefs]="off"
 )
 
+
 w100_keys=(
     "10240_x86"  "10240_x64"
     "14393_x86"  "14393_x64"
     "17763_x86"  "17763_x64"
+    "18362_x86"  "18362_x64"
     "19041_x86"  "19041_x64"
                  "20348_x64"
-                 "22000_x64"
-                 "22621_x64"
 )
 
+
 declare -A w100_labels=(
-    [10240_x86]="Windows 10, version 1507, 32-bit"
-    [10240_x64]="Windows 10, version 1507, 64-bit"
-    [14393_x86]="Windows 10, version 1607, 32-bit"
-    [14393_x64]="Windows 10, version 1607, 64-bit and Server 2016"
-    [17763_x86]="Windows 10, version 1809, 32-bit"
-    [17763_x64]="Windows 10, version 1809, 64-bit and Server 2019"
-    [19041_x86]="Windows 10, version 2004/20H2/21H1/21H2/22H2, 32-bit"
-    [19041_x64]="Windows 10, version 2004/20H2/21H1/21H2/22H2, 64-bit"
-    [20348_x64]="Windows Server 2022"
-    [22000_x64]="Windows 11, version 21H2"
-    [22621_x64]="Windows 11, version 22H2"
+    [10240_x86]="Windows 10, 1507, 32-bit"
+    [10240_x64]="Windows 10, 1507, 64-bit"
+    [14393_x86]="Windows 10, 1607, 32-bit"
+    [14393_x64]="Windows 10, 1607 / Server 2016, 64-bit"
+    [17763_x86]="Windows 10, 1809, 32-bit"
+    [17763_x64]="Windows 10, 1809 / Server 2019, 64-bit"
+    [18362_x86]="Windows 10, 1903/1909, 32-bit"
+    [18362_x64]="Windows 10, 1903/1909, 64-bit"
+    [19041_x86]="Windows 10, 2004/20H2/21H1/21H2, 32-bit"
+    [19041_x64]="Windows 10, 2004/20H2/21H1/21H2, 64-bit"
+    [20348_x64]="Windows Server 2022, 64-bit"
 )
+
 
 declare -A w100_values=(
     [10240_x86]="off"  [10240_x64]="off"
     [14393_x86]="on"   [14393_x64]="on"
     [17763_x86]="on"   [17763_x64]="on"
+    [18362_x86]="off"  [18362_x64]="off"
     [19041_x86]="on"   [19041_x64]="on"
                        [20348_x64]="on"
-                       [22000_x64]="on"
-                       [22621_x64]="on"
 )
 
+
 download_parameters=()
+
 
 # ========== Functions ====================================================
 
@@ -433,13 +436,13 @@ function show_selection_dialogs_with_dialog ()
     then
         while [[ -z "${w100_list}" ]]
         do
-            if w100_list="$( dialog                                           \
-                --title "Windows 10 and 11 versions"                          \
-                --no-tags                                                     \
-                --stdout                                                      \
-                --checklist "Please select your Windows 10 and 11 versions:"  \
-                             0 0 0                                            \
-                            "${w100_dialog[@]}"                               \
+            if w100_list="$( dialog                                    \
+                --title "Windows 10 versions"                          \
+                --no-tags                                              \
+                --stdout                                               \
+                --checklist "Please select your Windows 10 versions:"  \
+                             0 0 0                                     \
+                            "${w100_dialog[@]}"                        \
                 )"
             then
                 :

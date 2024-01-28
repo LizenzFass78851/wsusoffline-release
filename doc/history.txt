@@ -1,5 +1,5 @@
 ................................................................................
-WSUS Offline Update - Community Edition - 12.7
+WSUS Offline Update - Community Edition - 12.6.1
 Author: Torsten Wittrock                      (mailto:twittrock@wsusoffline.net)
 Community Edition                             (https://gitlab.com/wsusoffline/)
 ................................................................................
@@ -1854,42 +1854,8 @@ Community Edition 12.6.1 -- 24.12.2021
 - Support added for .NET 6 (Thanks to "aker")
 - C++ 2015-2022 Redistributable Runtime Libraries updated to v. 14.30.30704.0 (Thanks to "aker")
 - November 2021 to December 2021 updates added to 'security only' lists for Windows 8.1 and Server 2012 / 2012 R2 (x86/x64) systems
-- November 2021 to December 2021 updates added to version-specific blacklists for Windows 10 and Server 2016 / 2019 / 2022 (x86/x64) systems
+- November 2021 to December 2021 updates added to version-specific blacklists for Windows 10 and Server 2016 / 2019 /2022 (x86/x64) systems
 - Fix: Cosmetic issue enabling Build 20348 for x86 in UpdateGenerator (Thanks to "aker")
 - Fix: Removed erroneously displayed error message(s) in DownloadUpdates.cmd (Thanks to "aker")
 - Fix: DetermineSystemProperties.vbs might fail to detect Office installations, if only some components (e.g. Lync or Groove) are installed (Thanks to "jmcaree")
 --------------------------------------------------------------------------------
-Community Edition 12.7 -- ??.??.????
-- NOTE: Support removed for Windows 10 version 1909 since Microsoft discontinued support for it on May 10th, 2022
-- Included complete rewrite of the Linux scripts version CE-2.8 (Special thanks to H. Buhrmester)
-- [work in progress] Support added for Windows 11
-- Added static update definition files for Windows 10 Version 22H2 (build 19045)
-- "feature upgrades via enablement package" mechanism now allows updating to older, but still supported builds (Thanks to "aker")
-- misc. improvements to InstallOSUpdate.cmd and InstallOfficeUpdate.com (Thanks to "aker")
-- Included Download URLs for Windows 10 21H2
-- Removed support for .NET Framework 4.5.2, 4.6 and 4.6.1; these version will be upgraded to 4.6.2 (Thanks to "aker")
-- Static download URLs for aria2 download utility updated to v. 1.36.0 (Thanks to "harry" and "boco")
-- [UNTESTED] .NET Framework 4 updated to v. 4.8.1 for Windows 10 20H2 / Windows Server 2022 and newer (Thanks to "aker")
-- .NET 5 support removed since Microsoft discontinued support for it on May 10th, 2022
-- .NET 6 updated to version 6.0.12
-- Support added for .NET 7 (Thanks to "aker")
-- C++ 2015-2022 Redistributable Runtime Libraries updated to v. 14.34.31931.0 (Thanks to "harry" and "aker")
-- January 2022 to December 2022 updates added to 'security only' lists for Windows 8.1 and Server 2012 / 2012 R2 (x86/x64) systems
-- January 2022 to December 2022 updates added to version-specific blacklists for Windows 10 and Server 2016 / 2019 / 2022 (x86/x64) systems
-- Replaced superseded April 2021 Servicing stack update (kb5011571) by July 2022 Servicing stack update (kb5016263) for Windows Server 2012 (Thanks to "aker")
-- Replaced superseded April 2021 Servicing stack update (kb5001403) by October 2022 Servicing stack update (kb5018922) for Windows 8.1 / Server 2012 R2 (Thanks to "aker")
-- Replaced superseded April 2021 Servicing stack update (kb5001399) by May 2022 Servicing stack update (kb5014024) for Windows 10 Version 1507 (Thanks to "aker")
-- Removed obsolete May 2018 Servicing stack update (kb4132216) for Windows Server 2016 and Windows 10 Version 1607 (Thanks to "rbronka")
-- Replaced superseded September 2021 Servicing stack update (kb5005698) by September 2022 Servicing stack update (kb5017396) for Windows 10 Version 1607 and Windows Server 2016 (Thanks to "aker")
-- Replaced superseded August 2021 Servicing stack update (kb5005260) by May 2022 Servicing stack update (kb5014032) for Windows 10 Version 20H2/21H1/21H2 (Thanks to "aker")
-- Replaced superseded January 2021 Secure Boot DBX update (kb4535680) by August 2022 Secure Boot DBX update (kb5012170) (Thanks to "aker")
-- Wget download utility updated to version 1.21.3 [2022-03-12] (Thanks to "boco")
-- AutoIt script compiler updated to version 3.3.16.1 (Thanks to "harry")
-- Fix: Download error in Linux scripts while parsing the certificate URLs (Thanks to "mani" and "hbuhrmester")
-- Fix: DoUpdate.cmd fails to recall the update when autoreboot is enabled, if an update requests a reboot instead of a recall (Thanks to "rbronca")
-- Fix: ListUpdatesToInstall.cmd will now show, if which files of an update are missing (Thanks to "aker")
-- Fix: Attempt to extract integrated Servicing Stack updates from the rollup packages and install them first (Thanks to "rbronka")
-- Fix: error message while cleaning up w100(-x64) directories (Thanks to "negg")
-- Fix: Microsoft Edge 100 (and newer) fail to install with error code 109, if the wsusoffline media is read only (Thanks to "jmcaree" and "Charles Waters")
-- Fix: wsusou will now install .NET 4.6.2 instead of 4.8 on Windows 10 1507 LTSB (Thanks to "aker")
-- Fix: simplify AddCustomLanguageSupport.cmd to decrease error rate (Thanks to "han lunes" and "hbuhrmester")

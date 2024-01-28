@@ -2,7 +2,7 @@
 #
 # Filename: compare-integrity-database.bash
 #
-# Copyright (C) 2016-2022 Hartmut Buhrmester
+# Copyright (C) 2016-2021 Hartmut Buhrmester
 #                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
@@ -108,12 +108,8 @@ function create_diff_files ()
     do
         printf '%s\n' "Processing: ${filename}"
         # Skip the first five lines with hashdeep comments
-        #
-        # This is different than the ESR version, because the file
-        # hashes-msedge.txt does not actually have all headers of a
-        # regular hashdeep file.
-        grep -v -e "^%%%% " -e "^## " "${filename}"  \
-        | tr -d '\r'                                 \
+        grep -v -e "^%%%% " -e "^## " "${filename}" \
+        | tr -d '\r'                                \
         | sort > "${temp_directory}/${filename}"
         # Remove empty files
         if [[ ! -s "${temp_directory}/${filename}" ]]
