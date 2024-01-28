@@ -1,6 +1,8 @@
 # wsusoffline-release
 This repository contains wsusoffline package (Windows Update Pack) for supported Windows and Office versions
 
+#### There are currently problems running the wsus offline package because this linefeed simply cannot be changed to the correct one and that is why it fails. The commit [e2c3589](https://github.com/LizenzFass78851/wsusoffline-release/commit/e2c3589be1529ace49689f43ddc5199776838791) didn't work afterwards either
+
 See the [releases](https://github.com/LizenzFass78851/wsusoffline-release/releases) to download the releases
 
 | Product | Link |
