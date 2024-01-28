@@ -55,6 +55,10 @@ jobs:
     
       - name: fix linefeed
         run: |
+          # Debug view linefeed
+          file ./README.md
+          echo ------------
+          
           find ./* -name '*' -type f \
             | grep -v ".bash" \
             | grep -v ".exe" \
@@ -62,6 +66,10 @@ jobs:
           cat /tmp/files-for-dos-patch.txt
           while read line; do sed -E -i $'s/$/\r/' $line; done < /tmp/files-for-dos-patch.txt
           rm /tmp/files-for-dos-patch.txt
+
+          # Debug view linefeed
+          echo ------------
+          file ./README.md
 
       - name: generate
         run: |
@@ -76,6 +84,11 @@ jobs:
           export isofile=$(ls *.iso)
           split -b 1920M  $isofile $isofile.
           rm $isofile
+          
+          # Debug view linefeed
+          echo -----------
+          cd ../
+          file ./README.md
    
       - name: Publish release ISO
         uses: "marvinpinto/action-automatic-releases@latest"
