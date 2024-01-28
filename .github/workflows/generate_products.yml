@@ -52,6 +52,15 @@ jobs:
           git config --global --add safe.directory $GITHUB_WORKSPACE
           git clone https://github-actions:$GITHUB_TOKEN@${GITHUB_SERVER_URL##*/}/$GITHUB_REPOSITORY.git $GITHUB_WORKSPACE --branch $GITHUB_REF_NAME
           
+      - name: fix linefeed
+        run: |
+          find ./* -name '*' -type f \
+            | grep -v ".bash" \
+            | grep -v ".exe" \
+            | sort >> /tmp/files-for-dos-patch.txt
+          while read line; do sed -E -i $'s/$/\r/' $line; done < /tmp/files-for-dos-patch.txt
+          rm /tmp/files-for-dos-patch.txt
+
       - name: generate
         run: |
           export LANG=en_US.utf8
