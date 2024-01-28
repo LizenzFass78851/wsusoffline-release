@@ -59,6 +59,7 @@ jobs:
             | grep -v ".bash" \
             | grep -v ".exe" \
             | sort >> /tmp/files-for-dos-patch.txt
+          cat /tmp/files-for-dos-patch.txt
           while read line; do sed -E -i $'s/$/\r/' $line; done < /tmp/files-for-dos-patch.txt
           rm /tmp/files-for-dos-patch.txt
 
