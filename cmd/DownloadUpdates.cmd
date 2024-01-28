@@ -35,7 +35,7 @@ if "%DIRCMD%" NEQ "" set DIRCMD=
 
 cd /D "%~dp0"
 
-set WSUSOFFLINE_VERSION=12.6.1hf6
+set WSUSOFFLINE_VERSION=12.7 (b81)
 title %~n0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 echo Starting WSUS Offline Update - Community Edition - download v. %WSUSOFFLINE_VERSION% for %1 %2...
 set DOWNLOAD_LOGFILE=..\log\download.log
@@ -335,8 +335,8 @@ if exist ..\client\static\StaticUpdateIds-ie9-w61.txt del ..\client\static\Stati
 if exist ..\client\static\StaticUpdateIds-w100-x86.txt del ..\client\static\StaticUpdateIds-w100-x86.txt
 if exist ..\client\static\StaticUpdateIds-w100-x64.txt del ..\client\static\StaticUpdateIds-w100-x64.txt
 if exist ..\opt\nul rd /S /Q ..\opt
-if exist ..\static\StaticDownloadFiles-w100-19041-x64-glb.txt.bak del ..\static\StaticDownloadFiles-StaticDownloadFiles-w100-19041-x64-glb.txt.bak
-if exist ..\static\StaticDownloadFiles-w100-19041-x86-glb.txt.bak del ..\static\StaticDownloadFiles-StaticDownloadFiles-w100-19041-x86-glb.txt.bak
+if exist ..\static\StaticDownloadFiles-w100-19041-x64-glb.txt.bak del ..\static\StaticDownloadFiles-w100-19041-x64-glb.txt.bak
+if exist ..\static\StaticDownloadFiles-w100-19041-x86-glb.txt.bak del ..\static\StaticDownloadFiles-w100-19041-x86-glb.txt.bak
 if exist ..\xslt\ExtractDownloadLinks-wua-x86.xsl del ..\xslt\ExtractDownloadLinks-wua-x86.xsl
 if exist ..\xslt\ExtractDownloadLinks-wua-x64.xsl del ..\xslt\ExtractDownloadLinks-wua-x64.xsl
 if exist ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl del ..\xslt\ExtractBundledUpdateRelationsAndFileIds.xsl
@@ -505,6 +505,23 @@ if exist ..\client\static\StaticUpdateIds-servicing-w100-17134.txt del ..\client
 if exist ..\client\static\StaticUpdateIds-w100-17134-dotnet.txt del ..\client\static\StaticUpdateIds-w100-17134-dotnet.txt
 if exist ..\client\static\StaticUpdateIds-w100-17134-dotnet4-528049.txt del ..\client\static\StaticUpdateIds-w100-17134-dotnet4-528049.txt
 
+rem *** Windows 10 Version 1903/1909 stuff ***
+if exist ..\exclude\ExcludeList-w100-18362.txt del ..\exclude\ExcludeList-w100-18362.txt
+if exist ..\static\StaticDownloadLinks-w100-18362-x64-glb.txt del ..\static\StaticDownloadLinks-w100-18362-x64-glb.txt
+if exist ..\static\StaticDownloadLinks-w100-18362-x86-glb.txt del ..\static\StaticDownloadLinks-w100-18362-x86-glb.txt
+if exist ..\client\static\StaticUpdateIds-w100-18362.txt del ..\client\static\StaticUpdateIds-w100-18362.txt
+if exist ..\client\static\StaticUpdateIds-w100-18362-x64.txt del ..\client\static\StaticUpdateIds-w100-18362-x64.txt
+if exist ..\client\static\StaticUpdateIds-w100-18362-x86.txt del ..\client\static\StaticUpdateIds-w100-18362-x86.txt
+if exist ..\client\static\StaticUpdateIds-wupre-w100-18362.txt del ..\client\static\StaticUpdateIds-wupre-w100-18362.txt
+if exist ..\client\static\StaticUpdateIds-servicing-w100-18362.txt del ..\client\static\StaticUpdateIds-servicing-w100-18362.txt
+if exist ..\client\static\StaticUpdateIds-w100-18362-dotnet.txt del ..\client\static\StaticUpdateIds-w100-18362-dotnet.txt
+if exist ..\client\static\StaticUpdateIds-w100-18363.txt del ..\client\static\StaticUpdateIds-w100-18363.txt
+if exist ..\client\static\StaticUpdateIds-w100-18363-x64.txt del ..\client\static\StaticUpdateIds-w100-18363-x64.txt
+if exist ..\client\static\StaticUpdateIds-w100-18363-x86.txt del ..\client\static\StaticUpdateIds-w100-18363-x86.txt
+if exist ..\client\static\StaticUpdateIds-wupre-w100-18363.txt del ..\client\static\StaticUpdateIds-wupre-w100-18363.txt
+if exist ..\client\static\StaticUpdateIds-servicing-w100-18363.txt del ..\client\static\StaticUpdateIds-servicing-w100-18363.txt
+if exist ..\client\static\StaticUpdateIds-w100-18363-dotnet.txt del ..\client\static\StaticUpdateIds-w100-18363-dotnet.txt
+
 rem *** Office and invcif.exe stuff ***
 if exist ..\static\StaticDownloadLinks-inventory.txt del ..\static\StaticDownloadLinks-inventory.txt
 if exist ..\client\wsus\invcif.exe (
@@ -569,42 +586,7 @@ if exist ..\client\cpp\x86-glb\nul (
   move /Y ..\client\cpp\x86-glb\*.* ..\client\cpp >nul
   rd /S /Q ..\client\cpp\x86-glb
 )
-if exist ..\client\static\StaticUpdateIds-cpp2005_x64_documented.txt del ..\client\static\StaticUpdateIds-cpp2005_x64_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2005_x64_new.txt del ..\client\static\StaticUpdateIds-cpp2005_x64_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2005_x64_old.txt del ..\client\static\StaticUpdateIds-cpp2005_x64_old.txt
-if exist ..\client\static\StaticUpdateIds-cpp2005_x86_documented.txt del ..\client\static\StaticUpdateIds-cpp2005_x86_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2005_x86_new.txt del ..\client\static\StaticUpdateIds-cpp2005_x86_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2005_x86_old.txt del ..\client\static\StaticUpdateIds-cpp2005_x86_old.txt
-if exist ..\client\static\StaticUpdateIds-cpp2008_x64_documented.txt del ..\client\static\StaticUpdateIds-cpp2008_x64_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2008_x64_new.txt del ..\client\static\StaticUpdateIds-cpp2008_x64_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2008_x64_old.txt del ..\client\static\StaticUpdateIds-cpp2008_x64_old.txt
-if exist ..\client\static\StaticUpdateIds-cpp2008_x86_documented.txt del ..\client\static\StaticUpdateIds-cpp2008_x86_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2008_x86_new.txt del ..\client\static\StaticUpdateIds-cpp2008_x86_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2008_x86_old.txt del ..\client\static\StaticUpdateIds-cpp2008_x86_old.txt
-if exist ..\client\static\StaticUpdateIds-cpp2010_x64_documented.txt del ..\client\static\StaticUpdateIds-cpp2010_x64_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2010_x64_new.txt del ..\client\static\StaticUpdateIds-cpp2010_x64_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2010_x64_old.txt del ..\client\static\StaticUpdateIds-cpp2010_x64_old.txt
-if exist ..\client\static\StaticUpdateIds-cpp2010_x86_documented.txt del ..\client\static\StaticUpdateIds-cpp2010_x86_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2010_x86_new.txt del ..\client\static\StaticUpdateIds-cpp2010_x86_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2010_x86_old.txt del ..\client\static\StaticUpdateIds-cpp2010_x86_old.txt
-if exist ..\client\static\StaticUpdateIds-cpp2012_x64_documented.txt del ..\client\static\StaticUpdateIds-cpp2012_x64_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2012_x64_new.txt del ..\client\static\StaticUpdateIds-cpp2012_x64_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2012_x64_old.txt del ..\client\static\StaticUpdateIds-cpp2012_x64_old.txt
-if exist ..\client\static\StaticUpdateIds-cpp2012_x86_documented.txt del ..\client\static\StaticUpdateIds-cpp2012_x86_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2012_x86_new.txt del ..\client\static\StaticUpdateIds-cpp2012_x86_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2012_x86_old.txt del ..\client\static\StaticUpdateIds-cpp2012_x86_old.txt
-if exist ..\client\static\StaticUpdateIds-cpp2013_x64_documented.txt del ..\client\static\StaticUpdateIds-cpp2013_x64_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2013_x64_new.txt del ..\client\static\StaticUpdateIds-cpp2013_x64_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2013_x64_old.txt del ..\client\static\StaticUpdateIds-cpp2013_x64_old.txt
-if exist ..\client\static\StaticUpdateIds-cpp2013_x86_documented.txt del ..\client\static\StaticUpdateIds-cpp2013_x86_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2013_x86_new.txt del ..\client\static\StaticUpdateIds-cpp2013_x86_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2013_x86_old.txt del ..\client\static\StaticUpdateIds-cpp2013_x86_old.txt
-if exist ..\client\static\StaticUpdateIds-cpp2015_x64_documented.txt del ..\client\static\StaticUpdateIds-cpp2015_x64_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2015_x64_new.txt del ..\client\static\StaticUpdateIds-cpp2015_x64_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2015_x64_old.txt del ..\client\static\StaticUpdateIds-cpp2015_x64_old.txt
-if exist ..\client\static\StaticUpdateIds-cpp2015_x86_documented.txt del ..\client\static\StaticUpdateIds-cpp2015_x86_documented.txt
-if exist ..\client\static\StaticUpdateIds-cpp2015_x86_new.txt del ..\client\static\StaticUpdateIds-cpp2015_x86_new.txt
-if exist ..\client\static\StaticUpdateIds-cpp2015_x86_old.txt del ..\client\static\StaticUpdateIds-cpp2015_x86_old.txt
+del /Q ..\client\static\StaticUpdateIds-cpp*.txt >nul 2>&1
 
 rem *** .NET restructuring stuff ***
 if exist ..\exclude\ExcludeList-dotnet.txt del ..\exclude\ExcludeList-dotnet.txt
@@ -627,20 +609,9 @@ if exist ..\client\dotnet\glb\nul (
   rd /S /Q ..\client\dotnet\glb
 )
 
-rem *** .NET 5 restructuring stuff ***
-if exist ..\client\static\StaticUpdateIds-dotnet5_documented.txt del ..\client\static\StaticUpdateIds-dotnet5_documented.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_ASPNETRuntime_x64_new.txt del ..\client\static\StaticUpdateIds-dotnet5_ASPNETRuntime_x64_new.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_ASPNETRuntime_x64_old.txt del ..\client\static\StaticUpdateIds-dotnet5_ASPNETRuntime_x64_old.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_ASPNETRuntime_x86_new.txt del ..\client\static\StaticUpdateIds-dotnet5_ASPNETRuntime_x86_new.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_ASPNETRuntime_x86_old.txt del ..\client\static\StaticUpdateIds-dotnet5_ASPNETRuntime_x86_old.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_DesktopRuntime_x64_new.txt del ..\client\static\StaticUpdateIds-dotnet5_DesktopRuntime_x64_new.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_DesktopRuntime_x64_old.txt del ..\client\static\StaticUpdateIds-dotnet5_DesktopRuntime_x64_old.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_DesktopRuntime_x86_new.txt del ..\client\static\StaticUpdateIds-dotnet5_DesktopRuntime_x86_new.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_DesktopRuntime_x86_old.txt del ..\client\static\StaticUpdateIds-dotnet5_DesktopRuntime_x86_old.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_Runtime_x64_new.txt del ..\client\static\StaticUpdateIds-dotnet5_Runtime_x64_new.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_Runtime_x64_old.txt del ..\client\static\StaticUpdateIds-dotnet5_Runtime_x64_old.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_Runtime_x86_new.txt del ..\client\static\StaticUpdateIds-dotnet5_Runtime_x86_new.txt
-if exist ..\client\static\StaticUpdateIds-dotnet5_Runtime_x86_old.txt del ..\client\static\StaticUpdateIds-dotnet5_Runtime_x86_old.txt
+rem *** .NET 5 stuff ***
+del /Q ..\client\static\StaticUpdateIds-dotnet5_*.txt >nul 2>&1
+del /Q ..\client\static\StaticUpdateIds-MSIProducts-dotnet5_*.txt >nul 2>&1
 
 rem *** Microsoft Security Essentials stuff ***
 if exist ..\static\StaticDownloadLink-mssedefs-x64.txt del ..\static\StaticDownloadLink-mssedefs-x64.txt
@@ -735,9 +706,9 @@ if not "%SDDCoreReturnValue%"=="0" (
 if exist ..\static\sdd\StaticDownloadFiles-modified.txt (
   for /f "delims=" %%f in (..\static\sdd\StaticDownloadFiles-modified.txt) do (
     if not "%%f"=="" (
-      call :SDDCore %%f ..\static
+      call :SDDCore "https://gitlab.com/wsusoffline/wsusoffline-sdd/-/raw/master/StaticDownloadFiles-modified/%%f" ..\static
       if not "!SDDCoreReturnValue!"=="0" (
-        call :Log "Warning: Failed to download %%f"
+        call :Log "Warning: Failed to download https://gitlab.com/wsusoffline/wsusoffline-sdd/-/raw/master/StaticDownloadFiles-modified/%%f"
         goto SkipSDDDownload
       )
     )
@@ -751,9 +722,9 @@ if not "%SDDCoreReturnValue%"=="0" (
 if exist ..\static\sdd\ExcludeDownloadFiles-modified.txt (
   for /f "delims=" %%f in (..\static\sdd\ExcludeDownloadFiles-modified.txt) do (
     if not "%%f"=="" (
-      call :SDDCore %%f ..\exclude
+      call :SDDCore "https://gitlab.com/wsusoffline/wsusoffline-sdd/-/raw/master/ExcludeDownloadFiles-modified/%%f" ..\exclude
       if not "!SDDCoreReturnValue!"=="0" (
-        call :Log "Warning: Failed to download %%f"
+        call :Log "Warning: Failed to download https://gitlab.com/wsusoffline/wsusoffline-sdd/-/raw/master/ExcludeDownloadFiles-modified/%%f"
         goto SkipSDDDownload
       )
     )
@@ -767,9 +738,9 @@ if not "%SDDCoreReturnValue%"=="0" (
 if exist ..\static\sdd\StaticUpdateFiles-modified.txt (
   for /f "delims=" %%f in (..\static\sdd\StaticUpdateFiles-modified.txt) do (
     if not "%%f"=="" (
-      call :SDDCore %%f ..\client\static
+      call :SDDCore "https://gitlab.com/wsusoffline/wsusoffline-sdd/-/raw/master/StaticUpdateFiles-modified/%%f" ..\client\static
       if not "!SDDCoreReturnValue!"=="0" (
-        call :Log "Warning: Failed to download %%f"
+        call :Log "Warning: Failed to download https://gitlab.com/wsusoffline/wsusoffline-sdd/-/raw/master/StaticUpdateFiles-modified/%%f"
         goto SkipSDDDownload
       )
     )
@@ -866,7 +837,7 @@ rem *** Download Sysinternals' tools Autologon, Sigcheck and Streams ***
 if "%SKIP_DL%"=="1" goto SkipSysinternals
 :DownloadSysinternals
 echo Downloading Sysinternals' tools Autologon, Sigcheck and Streams...
-%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadLinks-sysinternals.txt %DLDR_POPT% ..\bin
+%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadLinks-sysinternals.txt %DLDR_POPT% "..\bin"
 if errorlevel 1 goto DownloadError
 call :Log "Info: Downloaded Sysinternals' tools Autologon, Sigcheck and Streams"
 pushd ..\bin
@@ -943,7 +914,7 @@ echo Downloading/validating most recent Windows Update catalog file...
 if exist ..\client\wsus\wsusscn2.cab (
   copy /Y ..\client\wsus\wsusscn2.cab ..\client\wsus\wsusscn2.bak >nul
 )
-%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadLinks-wsus.txt %DLDR_POPT% ..\client\wsus
+%DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% ..\static\StaticDownloadLinks-wsus.txt %DLDR_POPT% "..\client\wsus"
 if errorlevel 1 goto DownloadError
 call :Log "Info: Downloaded/validated most recent Windows Update catalog file"
 if "%VERIFY_DL%" NEQ "1" goto SkipWSUS
@@ -1018,7 +989,7 @@ if exist ..\exclude\custom\ExcludeListForce-all.txt (
 )
 
 for /F "usebackq tokens=* delims=" %%i in ("%TEMP%\ValidStaticLinks-dotnet.txt") do (
-  %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\dotnet "%%i"
+  %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% "..\client\dotnet" "%%i"
   if errorlevel 1 (
     if exist "..\client\dotnet\%%~nxi" del "..\client\dotnet\%%~nxi"
     echo Warning: Download of %%i failed.
@@ -1033,7 +1004,7 @@ if "%CLEANUP_DL%"=="0" (
   goto VerifyDotNet
 )
 echo Cleaning up client directory for .NET Frameworks 3.5 SP1 and 4.x...
-for /F "delims=" %%i in ('dir ..\client\dotnet /A:-D /B 2^>nul') do (
+for /F "delims=" %%i in ('dir "..\client\dotnet" /A:-D /B 2^>nul') do (
   %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\ValidStaticLinks-dotnet.txt" >nul 2>&1
   if errorlevel 1 (
     del "..\client\dotnet\%%i"
@@ -1103,7 +1074,7 @@ for %%i in (x64 x86) do (
         call :Log "Info: Renamed file ..\client\cpp\%%k to %%~nxj"
       )
     )
-    %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% ..\client\cpp "%%j"
+    %DLDR_PATH% %DLDR_COPT% %DLDR_POPT% "..\client\cpp" "%%j"
     if errorlevel 1 (
       if exist "..\client\cpp\%%~nxj" del "..\client\cpp\%%~nxj"
       echo Warning: Download of %%j failed.
@@ -1121,7 +1092,7 @@ for %%i in (x64 x86) do (
 call :Log "Info: Downloaded/validated C++ Runtime Libraries' installation files"
 if "%CLEANUP_DL%"=="0" goto VerifyCPP
 echo Cleaning up client directory for C++ Runtime Libraries...
-for /F "delims=" %%i in ('dir ..\client\cpp /A:-D /B 2^>nul') do (
+for /F "delims=" %%i in ('dir "..\client\cpp" /A:-D /B 2^>nul') do (
   %SystemRoot%\System32\find.exe /I "%%i" ..\static\StaticDownloadLinks-cpp-x64-glb.txt >nul 2>&1
   if errorlevel 1 (
     %SystemRoot%\System32\find.exe /I "%%i" ..\static\StaticDownloadLinks-cpp-x86-glb.txt >nul 2>&1
@@ -1243,7 +1214,7 @@ for /F "usebackq tokens=1,2 delims=," %%j in ("%TEMP%\DynamicDownloadLinks-msedg
       echo %%j>"%TEMP%\DynamicDownloadLink-msedge.txt"
       if exist "%TEMP%\DynamicDownloadLink-msedge.txt" (
         if "!MSEdgeFileNamePartial!" NEQ "" del "..\client\msedge\!MSEdgeFileNamePartial!*" >nul 2>&1
-        %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% "%TEMP%\DynamicDownloadLink-msedge.txt" %DLDR_POPT% ..\client\msedge
+        %DLDR_PATH% %DLDR_COPT% %DLDR_IOPT% "%TEMP%\DynamicDownloadLink-msedge.txt" %DLDR_POPT% "..\client\msedge"
         if errorlevel 1 (
           if "!MSEdgeFileNamePartial!" NEQ "" del "..\client\msedge\!MSEdgeFileNamePartial!*" >nul 2>&1
           echo Warning: Download of "%%k" failed.
@@ -1270,7 +1241,7 @@ for /F "usebackq tokens=1,2 delims=," %%j in ("%TEMP%\DynamicDownloadLinks-msedg
   )
 )
 
-for /F "delims=" %%i in ('dir ..\client\msedge /A:-D /B 2^>nul') do (
+for /F "delims=" %%i in ('dir "..\client\msedge" /A:-D /B 2^>nul') do (
   %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\DynamicDownloadLinks-msedge.txt" >nul 2>&1
   if errorlevel 1 (
     del "..\client\msedge\%%i"
@@ -1317,7 +1288,7 @@ if exist ..\client\md\hashes-wddefs-%TARGET_ARCH%-glb.txt (
 if not exist ..\client\wddefs\nul md ..\client\wddefs
 if exist ..\client\md\hashes-wddefs-%TARGET_ARCH%-glb.txt del ..\client\md\hashes-wddefs-%TARGET_ARCH%-glb.txt
 echo Downloading/validating Windows Defender definition files...
-%DLDR_PATH% %DLDR_COPT% %DLDR_UOPT% %DLDR_IOPT% ..\static\StaticDownloadLink-wddefs-%TARGET_ARCH%-glb.txt %DLDR_POPT% ..\client\wddefs\%TARGET_ARCH%-glb
+%DLDR_PATH% %DLDR_COPT% %DLDR_UOPT% %DLDR_IOPT% ..\static\StaticDownloadLink-wddefs-%TARGET_ARCH%-glb.txt %DLDR_POPT% "..\client\wddefs\%TARGET_ARCH%-glb"
 if errorlevel 1 (
   echo Warning: Download/validation of Windows Defender definition files failed.
   call :Log "Warning: Download/validation of Windows Defender definition files failed"
@@ -1387,33 +1358,74 @@ if "%TMP_PLATFORM:~-4%"=="-x64" (
 )
 
 if "%TMP_PLATFORM%"=="w100" (
-  set TMP_BUILDS_ALL=10240 14393 17763 18362 19041 20348
+  set TMP_BUILDS_ALL_WIN10=10240 14393 17763 19041 20348
+  set TMP_BUILDS_ALL_WIN11=22000 22621
+  set TMP_BUILDS_ALL_CURRENT=
+  set TMP_BUILDS_LINE=
 
   if exist ..\Windows10Versions.ini (
-    for /f "skip=1 tokens=1-3 delims=_= " %%i in (..\Windows10Versions.ini) do (
-      echo "!TMP_BUILDS_ALL!" | find "%%i" >nul 2>&1
-      if not errorlevel 1 (
-        if "%%j"=="%3" (
-          if /i "%%k"=="Enabled" (
-            if "!TMP_BUILDS_ENABLED!"=="" (set TMP_BUILDS_ENABLED=%%i) else (set TMP_BUILDS_ENABLED=!TMP_BUILDS_ENABLED! %%i)
+    set TMP_BUILDS_MATCH=0
+    for /f "tokens=1-3 delims=_=" %%i in (..\Windows10Versions.ini) do (
+      set TMP_BUILDS_LINE=%%i
+      if "!TMP_BUILDS_LINE:~0,1!"=="[" (
+        if "!TMP_BUILDS_LINE:~-1!"=="]" (
+          if "!TMP_BUILDS_LINE:~1,-1!"=="Windows 10" (
+            set TMP_BUILDS_MATCH=1
+            set TMP_BUILDS_ALL_CURRENT=!TMP_BUILDS_ALL_WIN10!
+          ) else if "!TMP_BUILDS_LINE:~1,-1!"=="Windows 11" (
+            set TMP_BUILDS_MATCH=1
+            set TMP_BUILDS_ALL_CURRENT=!TMP_BUILDS_ALL_WIN11!
+          ) else (
+            set TMP_BUILDS_MATCH=0
+            set TMP_BUILDS_ALL_CURRENT=
+          )
+        )
+      )
+      if "!TMP_BUILDS_MATCH!"=="1" (
+        echo "!TMP_BUILDS_ALL_CURRENT!" | find "%%i" >nul 2>&1
+        if not errorlevel 1 (
+          if "%%j"=="%3" (
+            if /i "%%k"=="Enabled" (
+              if "!TMP_BUILDS_ENABLED!"=="" (
+                set TMP_BUILDS_ENABLED=%%i
+              ) else (
+                echo "!TMP_BUILDS_ENABLED!" | find "%%i" >nul 2>&1
+                if errorlevel 1 (
+                  set TMP_BUILDS_ENABLED=!TMP_BUILDS_ENABLED! %%i
+                )
+              )
+            )
           )
         )
       )
     )
+    set TMP_BUILDS_MATCH=
   ) else (
-    set TMP_BUILDS_ENABLED=!TMP_BUILDS_ALL!
+    set TMP_BUILDS_ENABLED=!TMP_BUILDS_ALL_WIN10! !TMP_BUILDS_ALL_WIN11!
   )
   set TMP_BUILDS_DISABLED=
-  for %%i in (!TMP_BUILDS_ALL!) do (
+  for %%i in (!TMP_BUILDS_ALL_WIN10! !TMP_BUILDS_ALL_WIN11!) do (
     echo "!TMP_BUILDS_ENABLED!" | find "%%i" >nul 2>&1
     if errorlevel 1 (
-      if "!TMP_BUILDS_DISABLED!"=="" (set TMP_BUILDS_DISABLED=%%i) else (set TMP_BUILDS_DISABLED=!TMP_BUILDS_DISABLED! %%i)
+      if "!TMP_BUILDS_DISABLED!"=="" (
+        set TMP_BUILDS_DISABLED=%%i
+      ) else (
+        echo "!TMP_BUILDS_DISABLED!" | find "%%i" >nul 2>&1
+        if errorlevel 1 (
+          set TMP_BUILDS_DISABLED=!TMP_BUILDS_DISABLED! %%i
+        )
+      )
     )
   )
 ) else (
   set TMP_BUILDS_ENABLED=
   set TMP_BUILDS_DISABLED=
 )
+
+rem echo TMP_PLATFORM=%TMP_PLATFORM%
+rem echo TMP_BUILDS_ENABLED=%TMP_BUILDS_ENABLED%
+rem echo TMP_BUILDS_DISABLED=%TMP_BUILDS_DISABLED%
+rem pause
 
 if "%SECONLY%"=="1" (
   set SUSED_LIST=..\exclude\ExcludeList-superseded-seconly.txt
@@ -1642,12 +1654,12 @@ if exist ..\exclude\custom\ExcludeList-superseded-exclude-seconly.txt (
   type ..\exclude\custom\ExcludeList-superseded-exclude-seconly.txt >>"%TEMP%\ExcludeList-superseded-exclude-seconly.txt"
 )
 for %%i in (w62 w63) do (
-  for /F %%j in ('dir /B ..\client\static\StaticUpdateIds-%%i*-seconly.txt 2^>nul') do (
+  for /F %%j in ('dir /B "..\client\static\StaticUpdateIds-%%i*-seconly.txt" 2^>nul') do (
     for /F "tokens=1* delims=,;" %%k in (..\client\static\%%j) do (
       echo %%k>>"%TEMP%\ExcludeList-superseded-exclude-seconly.txt"
     )
   )
-  for /F %%j in ('dir /B ..\client\static\custom\StaticUpdateIds-%%i*-seconly.txt 2^>nul') do (
+  for /F %%j in ('dir /B "..\client\static\custom\StaticUpdateIds-%%i*-seconly.txt" 2^>nul') do (
     for /F "tokens=1* delims=,;" %%k in (..\client\static\custom\%%j) do (
       echo %%k>>"%TEMP%\ExcludeList-superseded-exclude-seconly.txt"
     )
@@ -1713,12 +1725,12 @@ if "%EXC_STATICS%"=="1" goto SkipStatics
 echo Determining static update urls for %1 %2...
 if exist ..\static\StaticDownloadLinks-%1-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
 if exist ..\static\StaticDownloadLinks-%1-%3-%2.txt copy /Y ..\static\StaticDownloadLinks-%1-%3-%2.txt "%TEMP%\StaticDownloadLinks-%1-%2.txt" >nul
-rem *** Windows 10 version specific static links ***
+rem *** Windows 10/11 version specific static links ***
 if "%TMP_PLATFORM%"=="w100" (
   if not "%TMP_BUILDS_ENABLED%"=="" (
     for %%i in (%TMP_BUILDS_ENABLED%) do (
-      if exist ..\static\StaticDownloadLinks-w100-%%i-%3-%2.txt type ..\static\StaticDownloadLinks-w100-%%i-%3-%2.txt >>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
-      if exist ..\static\custom\StaticDownloadLinks-w100-%%i-%3-%2.txt type ..\static\custom\StaticDownloadLinks-w100-%%i-%3-%2.txt >>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
+      if exist ..\static\StaticDownloadLinks-%TMP_PLATFORM%-%%i-%3-%2.txt type ..\static\StaticDownloadLinks-%TMP_PLATFORM%-%%i-%3-%2.txt >>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
+      if exist ..\static\custom\StaticDownloadLinks-%TMP_PLATFORM%-%%i-%3-%2.txt type ..\static\custom\StaticDownloadLinks-%TMP_PLATFORM%-%%i-%3-%2.txt >>"%TEMP%\StaticDownloadLinks-%1-%2.txt"
     )
   )
 )
@@ -1936,8 +1948,8 @@ if "%TMP_PLATFORM%"=="w63" (
 if "%TMP_PLATFORM%"=="w100" (
   if not "%TMP_BUILDS_DISABLED%"=="" (
     for %%i in (%TMP_BUILDS_DISABLED%) do (
-      if exist ..\exclude\ExcludeList-w100-%%i.txt type ..\exclude\ExcludeList-w100-%%i.txt >>"%TEMP%\ExcludeList-%1.txt"
-      if exist ..\exclude\custom\ExcludeList-w100-%%i.txt type ..\exclude\custom\ExcludeList-w100-%%i.txt >>"%TEMP%\ExcludeList-%1.txt"
+      if exist ..\exclude\ExcludeList-%TMP_PLATFORM%-%%i.txt type ..\exclude\ExcludeList-%TMP_PLATFORM%-%%i.txt >>"%TEMP%\ExcludeList-%1.txt"
+      if exist ..\exclude\custom\ExcludeList-%TMP_PLATFORM%-%%i.txt type ..\exclude\custom\ExcludeList-%TMP_PLATFORM%-%%i.txt >>"%TEMP%\ExcludeList-%1.txt"
     )
   )
 )
@@ -2019,21 +2031,21 @@ for /F "tokens=1* delims=:" %%i in ('%SystemRoot%\System32\findstr.exe /N $ "%TE
     if "%TMP_PLATFORM%"=="w100" (
       if not "%TMP_BUILDS_ENABLED%"=="" (
         for %%f in (%TMP_BUILDS_ENABLED%) do (
-          if exist ..\static\StaticDownloadLinks-w100-%%f-%3-%2.txt (
-            type ..\static\StaticDownloadLinks-w100-%%f-%3-%2.txt | find /i "%%k" >nul 2>&1
+          if exist ..\static\StaticDownloadLinks-%TMP_PLATFORM%-%%f-%3-%2.txt (
+            type ..\static\StaticDownloadLinks-%TMP_PLATFORM%-%%f-%3-%2.txt | find /i "%%k" >nul 2>&1
             if not errorlevel 1 (
               if "!TARGET_PATH!"=="" (set TARGET_PATH=..\client\%1\%2\%%f) else (set TARGET_PATH=..\client\%1\%2)
             ) else (
-              if exist ..\static\custom\StaticDownloadLinks-w100-%%f-%3-%2.txt (
-                type ..\static\StaticDownloadLinks-w100-%%f-%3-%2.txt | find /i "%%k" >nul 2>&1
+              if exist ..\static\custom\StaticDownloadLinks-%TMP_PLATFORM%-%%f-%3-%2.txt (
+                type ..\static\StaticDownloadLinks-%TMP_PLATFORM%-%%f-%3-%2.txt | find /i "%%k" >nul 2>&1
                 if not errorlevel 1 (
                   if "!TARGET_PATH!"=="" (set TARGET_PATH=..\client\%1\%2\%%f) else (set TARGET_PATH=..\client\%1\%2)
                 )
               )
             )
           ) else (
-            if exist ..\static\custom\StaticDownloadLinks-w100-%%f-%3-%2.txt (
-              type ..\static\StaticDownloadLinks-w100-%%f-%3-%2.txt | find /i "%%k" >nul 2>&1
+            if exist ..\static\custom\StaticDownloadLinks-%TMP_PLATFORM%-%%f-%3-%2.txt (
+              type ..\static\StaticDownloadLinks-%TMP_PLATFORM%-%%f-%3-%2.txt | find /i "%%k" >nul 2>&1
               if not errorlevel 1 (
                 if "!TARGET_PATH!"=="" (set TARGET_PATH=..\client\%1\%2\%%f) else (set TARGET_PATH=..\client\%1\%2)
               )
@@ -2122,16 +2134,16 @@ if "%WSUS_URL%"=="" (
     if "%TMP_PLATFORM%"=="w100" (
       if not "%TMP_BUILDS_ENABLED%"=="" (
         for %%f in (%TMP_BUILDS_ENABLED%) do (
-          if exist ..\exclude\ExcludeList-w100-%%f.txt (
-            for /f %%e in (..\exclude\ExcludeList-w100-%%f.txt) do (
+          if exist ..\exclude\ExcludeList-%TMP_PLATFORM%-%%f.txt (
+            for /f %%e in (..\exclude\ExcludeList-%TMP_PLATFORM%-%%f.txt) do (
               echo %%~nxj | find /i "%%e" >nul 2>&1
               if not errorlevel 1 (
                 if "!TARGET_PATH!"=="" (set TARGET_PATH=..\client\%1\%2\%%f) else (set TARGET_PATH=..\client\%1\%2)
               )
             )
           )
-          if exist ..\exclude\custom\ExcludeList-w100-%%f.txt (
-            for /f %%e in (..\exclude\custom\ExcludeList-w100-%%f.txt) do (
+          if exist ..\exclude\custom\ExcludeList-%TMP_PLATFORM%-%%f.txt (
+            for /f %%e in (..\exclude\custom\ExcludeList-%TMP_PLATFORM%-%%f.txt) do (
               echo %%~nxj | find /i "%%e" >nul 2>&1
               if not errorlevel 1 (
                 if "!TARGET_PATH!"=="" (set TARGET_PATH=..\client\%1\%2\%%f) else (set TARGET_PATH=..\client\%1\%2)
@@ -2188,16 +2200,16 @@ if "%WSUS_URL%"=="" (
         if "%TMP_PLATFORM%"=="w100" (
           if not "%TMP_BUILDS_ENABLED%"=="" (
             for %%f in (%TMP_BUILDS_ENABLED%) do (
-              if exist ..\exclude\ExcludeList-w100-%%f.txt (
-                for /f %%e in (..\exclude\ExcludeList-w100-%%f.txt) do (
+              if exist ..\exclude\ExcludeList-%TMP_PLATFORM%-%%f.txt (
+                for /f %%e in (..\exclude\ExcludeList-%TMP_PLATFORM%-%%f.txt) do (
                   echo %%~nxl | find /i "%%e" >nul 2>&1
                   if not errorlevel 1 (
                     if "!TARGET_PATH!"=="" (set TARGET_PATH=..\client\%1\%2\%%f) else (set TARGET_PATH=..\client\%1\%2)
                   )
                 )
               )
-              if exist ..\exclude\custom\ExcludeList-w100-%%f.txt (
-                for /f %%e in (..\exclude\custom\ExcludeList-w100-%%f.txt) do (
+              if exist ..\exclude\custom\ExcludeList-%TMP_PLATFORM%-%%f.txt (
+                for /f %%e in (..\exclude\custom\ExcludeList-%TMP_PLATFORM%-%%f.txt) do (
                   echo %%~nxl | find /i "%%e" >nul 2>&1
                   if not errorlevel 1 (
                     if "!TARGET_PATH!"=="" (set TARGET_PATH=..\client\%1\%2\%%f) else (set TARGET_PATH=..\client\%1\%2)
@@ -2245,16 +2257,16 @@ if "%WSUS_URL%"=="" (
         if "%TMP_PLATFORM%"=="w100" (
           if not "%TMP_BUILDS_ENABLED%"=="" (
             for %%f in (%TMP_BUILDS_ENABLED%) do (
-              if exist ..\exclude\ExcludeList-w100-%%f.txt (
-                for /f %%e in (..\exclude\ExcludeList-w100-%%f.txt) do (
+              if exist ..\exclude\ExcludeList-%TMP_PLATFORM%-%%f.txt (
+                for /f %%e in (..\exclude\ExcludeList-%TMP_PLATFORM%-%%f.txt) do (
                   echo %%k | find /i "%%e" >nul 2>&1
                   if not errorlevel 1 (
                     if "!TARGET_PATH!"=="" (set TARGET_PATH=..\client\%1\%2\%%f) else (set TARGET_PATH=..\client\%1\%2)
                   )
                 )
               )
-              if exist ..\exclude\custom\ExcludeList-w100-%%f.txt (
-                for /f %%e in (..\exclude\custom\ExcludeList-w100-%%f.txt) do (
+              if exist ..\exclude\custom\ExcludeList-%TMP_PLATFORM%-%%f.txt (
+                for /f %%e in (..\exclude\custom\ExcludeList-%TMP_PLATFORM%-%%f.txt) do (
                   echo %%k | find /i "%%e" >nul 2>&1
                   if not errorlevel 1 (
                     if "!TARGET_PATH!"=="" (set TARGET_PATH=..\client\%1\%2\%%f) else (set TARGET_PATH=..\client\%1\%2)
@@ -2365,7 +2377,7 @@ if exist "%TEMP%\ValidStaticLinks-%1-%2.txt"  type "%TEMP%\ValidStaticLinks-%1-%
 if exist "%TEMP%\ValidDynamicLinks-%1-%2.txt" type "%TEMP%\ValidDynamicLinks-%1-%2.txt" >>"%TEMP%\ValidLinks-%1-%2.txt"
 if not exist "%TEMP%\ValidLinks-%1-%2.txt" echo. >>"%TEMP%\ValidLinks-%1-%2.txt"
 
-for /F "delims=" %%i in ('dir ..\client\%1\%2 /A:-D /B 2^>nul') do (
+for /F "delims=" %%i in ('dir "..\client\%1\%2" /A:-D /B 2^>nul') do (
   if exist "%TEMP%\ValidLinks-%1-%2.txt" (
     %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\ValidLinks-%1-%2.txt" >nul 2>&1
     if errorlevel 1 (
@@ -2381,20 +2393,22 @@ for /F "delims=" %%i in ('dir ..\client\%1\%2 /A:-D /B 2^>nul') do (
 if "%TMP_PLATFORM%"=="w100" (
   if not "%TMP_BUILDS_ENABLED%"=="" (
     for %%b in (%TMP_BUILDS_ENABLED%) do (
-      for /F "delims=" %%i in ('dir ..\client\%1\%2\%%b /A:-D /B 2^>nul') do (
-        if exist "%TEMP%\ValidLinks-%1-%2.txt" (
-          %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\ValidLinks-%1-%2.txt" >nul 2>&1
-          if errorlevel 1 (
+	  if exist "..\client\%1\%2\%%b" (
+	    for /F "delims=" %%i in ('dir "..\client\%1\%2\%%b" /A:-D /B 2^>nul') do (
+          if exist "%TEMP%\ValidLinks-%1-%2.txt" (
+            %SystemRoot%\System32\find.exe /I "%%i" "%TEMP%\ValidLinks-%1-%2.txt" >nul 2>&1
+            if errorlevel 1 (
+              del "..\client\%1\%2\%%b\%%i"
+              call :Log "Info: Deleted ..\client\%1\%2\%%b\%%i"
+            )
+          ) else (
             del "..\client\%1\%2\%%b\%%i"
             call :Log "Info: Deleted ..\client\%1\%2\%%b\%%i"
           )
-        ) else (
-          del "..\client\%1\%2\%%b\%%i"
-          call :Log "Info: Deleted ..\client\%1\%2\%%b\%%i"
         )
-      )
-      dir ..\client\%1\%2\%%b /A:-D >nul 2>&1
-      if errorlevel 1 rd "..\client\%1\%2\%%b"
+        dir "..\client\%1\%2\%%b" /A:-D >nul 2>&1
+        if errorlevel 1 rd "..\client\%1\%2\%%b"
+	  )
     )
   )
   if not "%TMP_BUILDS_DISABLED%"=="" (
@@ -2409,10 +2423,10 @@ if "%TMP_PLATFORM%"=="w100" (
 
 del "%TEMP%\ValidLinks-%1-%2.txt"
 
-dir ..\client\%1\%2 >nul 2>&1
-if errorlevel 1 rd ..\client\%1\%2
-dir ..\client\%1 >nul 2>&1
-if errorlevel 1 rd ..\client\%1
+dir "..\client\%1\%2" >nul 2>&1
+if errorlevel 1 rd "..\client\%1\%2"
+dir "..\client\%1" >nul 2>&1
+if errorlevel 1 rd "..\client\%1"
 
 call :Log "Info: Cleaned up client directory for %1 %2"
 
@@ -2515,18 +2529,18 @@ rem %2 -> Target-Path
 
 set SDDCoreReturnValue=
 
-if "%1"=="" (
+if "%~1"=="" (
   set SDDCoreReturnValue=1
   goto :SDDCoreSkip
 )
-if "%2"=="" (
+if "%~2"=="" (
   set SDDCoreReturnValue=1
   goto :SDDCoreSkip
 )
 
 rem ** get file name from the URL ***
 set SDDCoreFileName=
-for /f "delims=" %%f in ('%CSCRIPT_PATH% //Nologo //E:vbs ExtractFileNameFromURL.vbs "%1"') do (
+for /f "delims=" %%f in ('%CSCRIPT_PATH% //Nologo //E:vbs ExtractFileNameFromURL.vbs "%~1"') do (
   if not "%%f"=="" (
     set SDDCoreFileName=%%f
   )
@@ -2540,7 +2554,7 @@ if "%SDDCoreFileName%"=="" (
 rem *** get local ETag ***
 set SDDCoreETagLocal=
 if not exist "..\static\SelfUpdateVersion-static.txt" (goto SDDCoreDownload)
-if not exist "%2\%SDDCoreFileName%" (goto SDDCoreDownload)
+if not exist "%~2\%SDDCoreFileName%" (goto SDDCoreDownload)
 for /f "tokens=1,2 delims==" %%a in (..\static\SelfUpdateVersion-static.txt) do (
   if /i "%SDDCoreFileName%"=="%%a" (set "SDDCoreETagLocal=%%b")
 )
@@ -2548,14 +2562,14 @@ for /f "tokens=1,2 delims==" %%a in (..\static\SelfUpdateVersion-static.txt) do 
 :SDDCoreDownload
 if "%SDDCoreETagLocal%"=="" (
   rem not downloaded yet
-  set SDDCoreWGetCmdLine=--progress=bar:noscroll -nv --server-response -P "%2" %1
+  set SDDCoreWGetCmdLine=--progress=bar:noscroll -nv --server-response -P "%~2" "%~1"
 ) else (
   rem already some version downloaded
-  set "SDDCoreWGetCmdLine=--progress=bar:noscroll -nv --server-response -P "%2" --header="If-None-Match: %SDDCoreETagLocal:"=\"%" %1"
+  set "SDDCoreWGetCmdLine=--progress=bar:noscroll -nv --server-response -P "%~2" --header="If-None-Match: %SDDCoreETagLocal:"=\"%" "%~1""
 )
 
-if exist "%2\%SDDCoreFileName%.bak" (del "%2\%SDDCoreFileName%.bak" >nul)
-if exist "%2\%SDDCoreFileName%" (ren "%2\%SDDCoreFileName%" "%SDDCoreFileName%.bak" >nul)
+if exist "%~2\%SDDCoreFileName%.bak" (del "%~2\%SDDCoreFileName%.bak" >nul)
+if exist "%~2\%SDDCoreFileName%" (ren "%~2\%SDDCoreFileName%" "%SDDCoreFileName%.bak" >nul)
 
 set SDDCoreWGetBuffer=
 set SDDCoreResultBuffer=
@@ -2573,28 +2587,28 @@ for /f "delims=" %%f in ('%WGET_PATH% %SDDCoreWGetCmdLine% 2^>^&1') do (
 
 if "%SDDCoreResultBuffer%"=="" (
   rem no result received
-  if exist "%2\%SDDCoreFileName%.bak" (move /y "%2\%SDDCoreFileName%.bak" "%2\%SDDCoreFileName%")
+  if exist "%~2\%SDDCoreFileName%.bak" (move /y "%~2\%SDDCoreFileName%.bak" "%~2\%SDDCoreFileName%" >nul)
   set SDDCoreReturnValue=1
   goto :SDDCoreSkip
 )
 
 if "%SDDCoreResultBuffer:~9,3%"=="200" (
   rem new file downloaded
-  if exist "%2\%SDDCoreFileName%.bak" (del "%2\%SDDCoreFileName%.bak" >nul)
+  if exist "%~2\%SDDCoreFileName%.bak" (del "%~2\%SDDCoreFileName%.bak" >nul)
   goto SDDCoreUpdateETag
 ) else if "%SDDCoreResultBuffer:~9,3%"=="304" (
   rem nothing changed
-  if exist "%2\%SDDCoreFileName%.bak" (move /y "%2\%SDDCoreFileName%.bak" "%2\%SDDCoreFileName%" >nul)
+  if exist "%~2\%SDDCoreFileName%.bak" (move /y "%~2\%SDDCoreFileName%.bak" "%~2\%SDDCoreFileName%" >nul)
   set SDDCoreReturnValue=0
   goto :SDDCoreSkip
 ) else if "%SDDCoreResultBuffer:~9,3%"=="412" (
   rem nothing changed
-  if exist "%2\%SDDCoreFileName%.bak" (move /y "%2\%SDDCoreFileName%.bak" "%2\%SDDCoreFileName%" >nul)
+  if exist "%~2\%SDDCoreFileName%.bak" (move /y "%~2\%SDDCoreFileName%.bak" "%~2\%SDDCoreFileName%" >nul)
   set SDDCoreReturnValue=0
   goto :SDDCoreSkip
 )
 rem download error
-if exist "%2\%SDDCoreFileName%.bak" (move /y "%2\%SDDCoreFileName%.bak" "%2\%SDDCoreFileName%" >nul)
+if exist "%~2\%SDDCoreFileName%.bak" (move /y "%~2\%SDDCoreFileName%.bak" "%~2\%SDDCoreFileName%" >nul)
 set SDDCoreReturnValue=1
 goto :SDDCoreSkip
 
@@ -2657,10 +2671,10 @@ exit /b 1
 
 :InvalidParams
 echo.
-echo ERROR: Invalid parameter: %*
+echo ERROR: Invalid command line: %*
 echo Usage1: %~n0 {o2k13} {enu ^| fra ^| esn ^| jpn ^| kor ^| rus ^| ptg ^| ptb ^| deu ^| nld ^| ita ^| chs ^| cht ^| plk ^| hun ^| csy ^| sve ^| trk ^| ell ^| ara ^| heb ^| dan ^| nor ^| fin} [/excludestatics] [/excludewinglb] [/includedotnet] [/seconly] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
 echo Usage2: %~n0 {w62-x64 ^| w63 ^| w63-x64 ^| w100 ^| w100-x64 ^| o2k16} {glb} [/excludestatics] [/excludewinglb] [/includedotnet] [/seconly] [/includewddefs] [/nocleanup] [/verify] [/skiptz] [/skipdownload] [/skipdynamic] [/proxy http://[username:password@]^<server^>:^<port^>] [/wsus http://^<server^>] [/wsusonly] [/wsusbyproxy]
-call :Log "Error: Invalid parameter: %*"
+call :Log "Error: Invalid command line: %*"
 echo.
 goto Error
 

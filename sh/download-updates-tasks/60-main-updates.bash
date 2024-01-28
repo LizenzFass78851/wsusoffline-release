@@ -2,7 +2,7 @@
 #
 # Filename: 60-main-updates.bash
 #
-# Copyright (C) 2016-2021 Hartmut Buhrmester
+# Copyright (C) 2016-2022 Hartmut Buhrmester
 #                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
@@ -33,8 +33,8 @@
 
 w100_versions_file="windows-10-versions.ini"
 
-w100_x86_all_versions=( 10240 14393 17763 18362 19041 )
-w100_x64_all_versions=( 10240 14393 17763 18362 19041 20348 )
+w100_x86_all_versions=( 10240 14393 17763 19041 )
+w100_x64_all_versions=( 10240 14393 17763 19041 20348 22000 22621 )
 
 w100_x86_enabled_versions=()
 w100_x64_enabled_versions=()

@@ -2,7 +2,7 @@
 #
 # Filename: 50-check-wsusoffline-version.bash
 #
-# Copyright (C) 2016-2021 Hartmut Buhrmester
+# Copyright (C) 2016-2022 Hartmut Buhrmester
 #                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
@@ -79,7 +79,7 @@ function get_installed_version ()
     log_info_message "Searching for the installed version of WSUS Offline Update..."
     if require_non_empty_file "../static/SelfUpdateVersion-this.txt"
     then
-        IFS=$'\r\n,' read -r installed_version  \
+        IFS=$',\r\n' read -r installed_version  \
                              installed_type     \
                              skip_rest          \
                              < "../static/SelfUpdateVersion-this.txt"
@@ -118,7 +118,7 @@ function get_available_version ()
     then
         if require_non_empty_file "../static/SelfUpdateVersion-recent.txt"
         then
-            IFS=$'\r\n,' read -r available_version  \
+            IFS=$',\r\n' read -r available_version  \
                                  available_type     \
                                  skip_rest          \
                                  < "../static/SelfUpdateVersion-recent.txt"

@@ -2,7 +2,7 @@
 #
 # Filename: 30-check-needed-applications.bash
 #
-# Copyright (C) 2016-2021 Hartmut Buhrmester
+# Copyright (C) 2016-2022 Hartmut Buhrmester
 #                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
@@ -97,6 +97,20 @@ function check_needed_applications ()
 
     log_info_message "Checking needed applications..."
 
+    if ((BASH_VERSINFO[0] < 4))
+    then
+        log_error_message "You need at least bash-4.2 to run this script"
+        missing_binaries="$(( missing_binaries + 1 ))"
+    fi
+    if ((BASH_VERSINFO[0] == 4))
+    then
+        if ((BASH_VERSINFO[1] < 2))
+        then
+            log_error_message "You need at least bash-4.2 to run this script"
+            missing_binaries="$(( missing_binaries + 1 ))"
+        fi
+    fi
+
     for binary_name in xmlstarlet xml
     do
         if type -P "${binary_name}" > /dev/null
@@ -131,6 +145,15 @@ function check_needed_applications ()
   otherwise, install the package md5deep, which used to provide the application hashdeep"
         missing_binaries="$(( missing_binaries + 1 ))"
         echo ""
+    fi
+
+    if  [[ "${kernel_name}" == "Darwin" ]]
+    then
+        if ! type -P greadlink > /dev/null
+        then
+            log_error_message "Please install the package coreutils (GNU core utilities)"
+            missing_binaries="$(( missing_binaries + 1 ))"
+        fi
     fi
 
     if (( missing_binaries == 1 ))

@@ -2,7 +2,7 @@
 
 # Filename: create-iso-image.bash
 #
-# Copyright (C) 2019-2021 Hartmut Buhrmester
+# Copyright (C) 2019-2022 Hartmut Buhrmester
 #                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
@@ -497,7 +497,7 @@ function create_filter_file ()
 
     # Copy the selected file ExcludeListISO-*.txt
     log_info_message "Copying ${selected_excludelist} ..."
-    
+
     # Remove empty lines and comments
     #
     # Carriage return must be removed first, because git may change all

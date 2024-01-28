@@ -37,19 +37,19 @@ if /i "%SEARCH_LEFT_MOST%"=="1" (
   set UPDATE_SEARCH_MASK=%2\*%1*.*
 )
 dir /A:-D /B /OD %UPDATE_SEARCH_MASK% >"%TEMP%\Update.tmp" 2>nul
-if errorlevel 1 (
-  if exist "%TEMP%\Update.tmp" del "%TEMP%\Update.tmp"
-) else (
-  for /F "usebackq" %%i in ("%TEMP%\Update.tmp") do echo %2\%%i >>"%TEMP%\UpdatesToInstall.txt"
-  rem for /F "usebackq" %%i in ("%TEMP%\Update.tmp") do echo %2\%%i>>"%TEMP%\UpdatesToInstall.txt"
+if not errorlevel 1 (
+  rem for /F "usebackq" %%i in ("%TEMP%\Update.tmp") do echo %2\%%i >>"%TEMP%\UpdatesToInstall.txt"
+  for /F "usebackq" %%i in ("%TEMP%\Update.tmp") do (echo %2\%%i) >>"%TEMP%\UpdatesToInstall.txt"
   if "%APPEND_UPDATES%"=="1" (
     type "%TEMP%\Update.tmp">>"%TEMP%\Update.txt"
     del "%TEMP%\Update.tmp"
   ) else (
     move /y "%TEMP%\Update.tmp" "%TEMP%\Update.txt" >nul
   )
+  goto EoF
 )
-goto EoF
+if exist "%TEMP%\Update.tmp" del "%TEMP%\Update.tmp"
+goto Error
 
 :NoExtensions
 echo ERROR: No command extensions available.

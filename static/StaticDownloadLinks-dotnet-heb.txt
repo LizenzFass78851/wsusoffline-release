@@ -1,2 +1,3 @@
 https://download.visualstudio.microsoft.com/download/pr/8e396c75-4d0d-41d3-aea8-848babc2736a/6985bdca5ad95176672eb0e77f9c98ac/ndp462-kb3151800-x86-x64-allos-heb.exe
 https://download.visualstudio.microsoft.com/download/pr/c2ad65ab-bab3-4d24-ada4-aaf2ff0c1266/3a64f80a67f4e9e853cfdffd060d79d4/ndp48-x86-x64-allos-heb.exe
+https://download.visualstudio.microsoft.com/download/pr/6f083c7e-bd40-44d4-9e3f-ffba71ec8b09/b09cb17f08a0edf72c2d11a9318f6c82/ndp481-x86-x64-allos-heb.exe

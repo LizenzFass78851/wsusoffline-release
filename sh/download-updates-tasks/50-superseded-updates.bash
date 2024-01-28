@@ -2,7 +2,7 @@
 #
 # Filename: 50-superseded-updates.bash
 #
-# Copyright (C) 2016-2021 Hartmut Buhrmester
+# Copyright (C) 2016-2022 Hartmut Buhrmester
 #                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
@@ -222,7 +222,10 @@ function rebuild_superseded_updates ()
     local -a excludelist_overrides=()
     local -a excludelist_overrides_seconly=()
     local current_file=""
+    local field_1=""
+    local field_2=""
     local kb_number=""
+    local skip_rest=""
 
     # Delete existing files, just to be sure
     rm -f "../exclude/ExcludeList-Linux-superseded.txt"
@@ -477,11 +480,29 @@ function rebuild_superseded_updates ()
           printf '%s\n' "windows8.1-${kb_number}"
       done > "${temp_dir}/w63-kb-numbers.txt"
 
+    # Create a list of Windows 10 build upgrades
+    #
+    # This was introduced in Community Edition 12.6.1 (b1) and corrected
+    # in 12.6.1 (b10).
+    kb_number=""
+
+    cat_existing_files                                            \
+        ../client/static/StaticUpdateIds-BuildUpgrades.txt        \
+        ../client/static/StaticUpdateIds-BuildUpgradesForced.txt  \
+    | while IFS=$',\r\n' read -r field_1 field_2 kb_number skip_rest
+    do
+        if [[ -n "${kb_number}" ]]
+        then
+            printf '%s\n' "windows10.0-${kb_number}"
+        fi
+    done > "${temp_dir}/w100-kb-numbers.txt"
+
     # List of override files for ExcludeList-superseded.txt
     excludelist_overrides+=(
         ../exclude/ExcludeList-superseded-exclude.txt
         ../exclude/custom/ExcludeList-superseded-exclude.txt
         "${temp_dir}/w63-kb-numbers.txt"
+        "${temp_dir}/w100-kb-numbers.txt"
     )
 
     # List of override files for ExcludeList-superseded-seconly.txt
@@ -496,6 +517,7 @@ function rebuild_superseded_updates ()
         ../client/static/custom/StaticUpdateIds-w62*-seconly.txt
         ../client/static/custom/StaticUpdateIds-w63*-seconly.txt
         "${temp_dir}/w63-kb-numbers.txt"
+        "${temp_dir}/w100-kb-numbers.txt"
     )
     shopt -u nullglob
 

@@ -1,2 +1,3 @@
 https://download.visualstudio.microsoft.com/download/pr/8e396c75-4d0d-41d3-aea8-848babc2736a/eb4551027c0a3fcb820737d73ba0e059/ndp462-kb3151800-x86-x64-allos-plk.exe
 https://download.visualstudio.microsoft.com/download/pr/c2ad65ab-bab3-4d24-ada4-aaf2ff0c1266/ae9342ac2c70f76e3f7d0030412ade0a/ndp48-x86-x64-allos-plk.exe
+https://download.visualstudio.microsoft.com/download/pr/6f083c7e-bd40-44d4-9e3f-ffba71ec8b09/fa2e09b6a496a2468738d12c069ae64c/ndp481-x86-x64-allos-plk.exe

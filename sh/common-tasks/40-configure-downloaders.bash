@@ -2,7 +2,7 @@
 #
 # Filename: 40-configure-downloaders.bash
 #
-# Copyright (C) 2016-2021 Hartmut Buhrmester
+# Copyright (C) 2016-2022 Hartmut Buhrmester
 #                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
@@ -516,9 +516,9 @@ function download_single_file_optimized ()
         ;;
     esac
 
-    if "${downloader}" "${all_options[@]}" \
-        "${logfile_prefix}${logfile}" \
-        "${download_dir_prefix}${download_dir}" \
+    if "${downloader}" "${all_options[@]}"       \
+        "${logfile_prefix}${logfile}"            \
+        "${download_dir_prefix}${download_dir}"  \
         "${download_link}"
     then
         log_debug_message "Download/validation of ${filename} succeeded"
@@ -602,9 +602,9 @@ function download_single_file_failsafe ()
     until (( result_code == 0 )) || (( try_count > max_tries ))
     do
         log_info_message "Downloading/validating ${filename}, try ${try_count} ..."
-        if "${downloader}" "${all_options[@]}" \
-            "${logfile_prefix}${logfile}" \
-            "${download_dir_prefix}${download_dir}" \
+        if "${downloader}" "${all_options[@]}"       \
+            "${logfile_prefix}${logfile}"            \
+            "${download_dir_prefix}${download_dir}"  \
             "${download_link}"
         then
             result_code="0"
@@ -686,9 +686,9 @@ function download_multiple_files ()
 
     log_info_message "Downloading/validating ${number_of_links} link(s) from input file ${input_file##*/} ..."
 
-    if "${downloader}" "${common_options[@]}" "${optimized_options[@]}" \
-        "${logfile_prefix}${logfile}" \
-        "${download_dir_prefix}${download_dir}" \
+    if "${downloader}" "${common_options[@]}" "${optimized_options[@]}"  \
+        "${logfile_prefix}${logfile}"                                    \
+        "${download_dir_prefix}${download_dir}"                          \
         "${inputfile_prefix}${input_file}"
     then
         log_info_message "Downloaded/validated ${number_of_links} link(s)"
@@ -912,8 +912,8 @@ function download_from_gitlab ()
     #
     # Since we already use the Etag for download, we can also use this
     # unique identifier locally to track file changes.
-    if [[ -f "${pathname}"  \
-       && -n "${global_new_etag}"           \
+    if [[ -f "${pathname}"         \
+       && -n "${global_new_etag}"  \
        && "${global_new_etag}" != "${old_etag}" ]]
     then
         log_info_message "Saving new ETag to database..."
@@ -1070,16 +1070,16 @@ function test_internet_connection ()
     sleep 4
 
     log_info_message "Testing the Internet connection..."
-    if "${downloader}" "${connection_test_a[@]}" \
-        "${logfile_prefix}${logfile}" \
+    if "${downloader}" "${connection_test_a[@]}"  \
+        "${logfile_prefix}${logfile}"             \
         "${connection_test_urls[@]}"
     then
         log_info_message "Connection test succeeded"
     else
         log_info_message "Retrying with increased verbosity in 10 seconds..."
         sleep 10
-        if "${downloader}" "${connection_test_b[@]}" \
-            "${logfile_prefix}${logfile}" \
+        if "${downloader}" "${connection_test_b[@]}"  \
+            "${logfile_prefix}${logfile}"             \
             "${connection_test_urls[@]}"
         then
             log_info_message "Connection test succeeded"

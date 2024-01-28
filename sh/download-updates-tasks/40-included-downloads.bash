@@ -2,7 +2,7 @@
 #
 # Filename: 40-included-downloads.bash
 #
-# Copyright (C) 2016-2021 Hartmut Buhrmester
+# Copyright (C) 2016-2022 Hartmut Buhrmester
 #                         <wsusoffline-scripts-xxyh@hartmut-buhrmester.de>
 #
 # License
@@ -304,25 +304,23 @@ function calculate_static_downloads_dotnet ()
     # Language packs for all selected languages on the command-line are
     # then added back from the localized download files.
     #
-    # The search patterns are the same as in the Windows script
-    # AddCustomLanguageSupport.cmd.
+    # For the .NET Frameworks 4.x in the master development branch,
+    # we can just copy the whole file.
     for current_lang in "${languages_list[@]}"
     do
         if [[ -s "../static/StaticDownloadLinks-dotnet-${current_lang}.txt" ]]
         then
-            grep_dos -F -i                 \
-                -e "ndp48-x86-x64-allos-"  \
-                "../static/StaticDownloadLinks-dotnet-${current_lang}.txt" \
+            cat_dos "../static/StaticDownloadLinks-dotnet-${current_lang}.txt" \
                 >> "${dotnet_installers}" || true
         fi
     done
 
     # Apply ExcludeListForce-all.txt as in
     # https://trac.wsusoffline.net/trac.fcgi/changeset/1015/trunk/cmd/DownloadUpdates.cmd
-    apply_exclude_lists \
-        "${dotnet_installers}" \
-        "${static_download_links}" \
-        "${temp_dir}/ExcludeListForce-all.txt" \
+    apply_exclude_lists                         \
+        "${dotnet_installers}"                  \
+        "${static_download_links}"              \
+        "${temp_dir}/ExcludeListForce-all.txt"  \
         "../exclude/custom/ExcludeListForce-all.txt"
     return 0
 }

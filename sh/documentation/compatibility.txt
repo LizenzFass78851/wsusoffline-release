@@ -1,12 +1,23 @@
+The Linux download scripts require at least bash 4.2. This is due to
+several features, which were introduced in bash, versions 4.0 to 4.2:
+
+- Associative arrays
+- Indirect addressing with name references
+- Shell options like pipefail and lastpipe, which work around limitations
+  of pipes in bash. The option lastpipe was introduced in bash 4.2,
+  so this marks the minimum needed version.
+
+
 The compatibility of the Linux download scripts was at least briefly
 tested on:
 
-Distribution         | Bash version
----------------------+-------------------------
-Debian  7.11 Wheezy  | GNU bash, version 4.2.37
-Debian  8.11 Jessie  | GNU bash, version 4.3.30
-Debian  9.8  Stretch | GNU bash, version 4.4.12
-Debian 10.7  Buster  | GNU bash, version 5.0.3
+Distribution          | Bash version
+----------------------+-------------------------
+Debian  7.11 Wheezy   | GNU bash, version 4.2.37
+Debian  8.11 Jessie   | GNU bash, version 4.3.30
+Debian  9.8  Stretch  | GNU bash, version 4.4.12
+Debian 10.7  Buster   | GNU bash, version 5.0.3
+Debian 11.2  Bullseye | GNU bash, version 5.1.4
 
 
 The distributions were identified with:
